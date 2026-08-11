@@ -72,7 +72,7 @@ export default function CGUPage() {
             Responsabilité
           </h2>
           <p>
-            Scout est fourni "en l&rsquo;état". Nous mettons tout en œuvre pour la fiabilité du
+            Scout est fourni «&nbsp;en l&rsquo;état&nbsp;». Nous mettons tout en œuvre pour la fiabilité du
             service mais ne pouvons garantir une disponibilité continue ni l&rsquo;absence
             d&rsquo;erreur d&rsquo;identification.
           </p>
