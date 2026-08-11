@@ -1,0 +1,16 @@
+{
+  "name": "extension",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "esbuild src/background.ts src/popup.ts src/onboarding.ts --bundle --outdir=dist --target=chrome110"
+  },
+  "dependencies": {
+    "@scout/shared": "*"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.280",
+    "esbuild": "^0.24.0",
+    "typescript": "^5"
+  }
+}

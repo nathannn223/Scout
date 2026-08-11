@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Scout",
+  "version": "0.1.0",
+  "permissions": ["contextMenus", "activeTab", "storage", "notifications"],
+  "host_permissions": ["https://scout.app/*", "http://localhost:3000/*"],
+  "background": { "service_worker": "dist/background.js" },
+  "action": { "default_popup": "popup.html" },
+  "icons": { "128": "icon-128.png" }
+}

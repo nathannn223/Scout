@@ -1,0 +1,784 @@
+<title>Scout — Plan de lancement</title>
+<style>
+  :root {
+    --bg: #eef0ea;
+    --bg-raised: #f8f9f4;
+    --ink: #1a1d18;
+    --ink-muted: #565b4f;
+    --accent: #ff4a26;
+    --accent-ink: #fff8f4;
+    --line: rgba(26, 29, 24, 0.13);
+    --line-strong: rgba(26, 29, 24, 0.22);
+    --good: #2f7d4f;
+    --good-bg: rgba(47, 125, 79, 0.1);
+    --warn: #a3690f;
+    --warn-bg: rgba(184, 121, 31, 0.12);
+    --mono-bg: #e3e6da;
+    --shadow: 0 1px 2px rgba(26, 29, 24, 0.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #15170f;
+      --bg-raised: #1e2117;
+      --ink: #ece9df;
+      --ink-muted: #a7ac9b;
+      --accent: #ff6a44;
+      --accent-ink: #1a0d08;
+      --line: rgba(236, 233, 223, 0.14);
+      --line-strong: rgba(236, 233, 223, 0.24);
+      --good: #55b478;
+      --good-bg: rgba(85, 180, 120, 0.14);
+      --warn: #e0a83e;
+      --warn-bg: rgba(224, 168, 62, 0.14);
+      --mono-bg: #262a1c;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #15170f;
+    --bg-raised: #1e2117;
+    --ink: #ece9df;
+    --ink-muted: #a7ac9b;
+    --accent: #ff6a44;
+    --accent-ink: #1a0d08;
+    --line: rgba(236, 233, 223, 0.14);
+    --line-strong: rgba(236, 233, 223, 0.24);
+    --good: #55b478;
+    --good-bg: rgba(85, 180, 120, 0.14);
+    --warn: #e0a83e;
+    --warn-bg: rgba(224, 168, 62, 0.14);
+    --mono-bg: #262a1c;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+  :root[data-theme="light"] {
+    --bg: #eef0ea;
+    --bg-raised: #f8f9f4;
+    --ink: #1a1d18;
+    --ink-muted: #565b4f;
+    --accent: #ff4a26;
+    --accent-ink: #fff8f4;
+    --line: rgba(26, 29, 24, 0.13);
+    --line-strong: rgba(26, 29, 24, 0.22);
+    --good: #2f7d4f;
+    --good-bg: rgba(47, 125, 79, 0.1);
+    --warn: #a3690f;
+    --warn-bg: rgba(184, 121, 31, 0.12);
+    --mono-bg: #e3e6da;
+    --shadow: 0 1px 2px rgba(26, 29, 24, 0.06);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 6rem;
+  }
+
+  .display {
+    font-family: Arial, "Helvetica Neue", "Segoe UI", sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+  }
+  .mono {
+    font-family: ui-monospace, "SF Mono", Consolas, "Liberation Mono", monospace;
+  }
+
+  /* ---- Header ---- */
+  header.top {
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.75rem;
+  }
+  .eyebrow {
+    font-family: ui-monospace, "SF Mono", Consolas, monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  h1.display {
+    font-size: clamp(2rem, 6vw, 2.9rem);
+    line-height: 1.05;
+    margin: 0.4rem 0 0.15rem;
+    text-wrap: balance;
+  }
+  .codename {
+    font-family: ui-monospace, "SF Mono", Consolas, monospace;
+    font-size: 0.85rem;
+    color: var(--ink-muted);
+  }
+  .tagline {
+    font-size: 1.08rem;
+    color: var(--ink-muted);
+    margin: 0.6rem 0 1.1rem;
+    max-width: 62ch;
+    text-wrap: balance;
+  }
+
+  .tagrow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .tag {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.35em;
+    font-family: ui-monospace, "SF Mono", Consolas, monospace;
+    font-size: 0.75rem;
+    padding: 0.32rem 0.6rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 3px;
+    background: var(--bg-raised);
+  }
+  .tag b {
+    color: var(--ink-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 0.68rem;
+  }
+
+  /* ---- Mechanism diagram ---- */
+  .mechanism {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    margin: 1.6rem 0 2.4rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--bg-raised);
+    box-shadow: var(--shadow);
+    flex-wrap: wrap;
+  }
+  .mstep {
+    flex: 1 1 200px;
+    padding: 1.1rem 1.2rem;
+    position: relative;
+  }
+  .mstep + .mstep { border-left: 1px dashed var(--line-strong); }
+  .mstep .n {
+    font-family: ui-monospace, "SF Mono", Consolas, monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+  }
+  .mstep h3 {
+    font-family: Arial, "Helvetica Neue", sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.98rem;
+    letter-spacing: 0.01em;
+    margin: 0.25rem 0 0.3rem;
+  }
+  .mstep p { margin: 0; font-size: 0.87rem; color: var(--ink-muted); }
+  .mstep .arrow {
+    display: none;
+  }
+  @media (min-width: 640px) {
+    .mstep:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -0.7rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--accent);
+      font-size: 1.1rem;
+      background: var(--bg-raised);
+      width: 1.4rem;
+      text-align: center;
+      z-index: 2;
+    }
+  }
+
+  /* ---- Sections / phases ---- */
+  section.phase {
+    margin: 2.6rem 0;
+    padding-top: 1.6rem;
+    border-top: 1px solid var(--line);
+  }
+  .phase-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.8rem;
+    margin-bottom: 0.3rem;
+  }
+  .phase-num {
+    font-family: ui-monospace, "SF Mono", Consolas, monospace;
+    font-size: 0.85rem;
+    color: var(--accent-ink);
+    background: var(--accent);
+    padding: 0.12rem 0.5rem;
+    border-radius: 3px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  h2.display {
+    font-size: 1.4rem;
+    margin: 0;
+    letter-spacing: 0.005em;
+  }
+  .objective {
+    color: var(--ink-muted);
+    font-size: 0.95rem;
+    margin: 0.5rem 0 1.1rem;
+    max-width: 64ch;
+  }
+  .objective b { color: var(--ink); font-weight: 600; }
+
+  h4.sublabel {
+    font-family: ui-monospace, "SF Mono", Consolas, monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--ink-muted);
+    margin: 1.3rem 0 0.6rem;
+  }
+
+  ul.steps, ol.steps {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+  ul.steps li, ol.steps li {
+    display: flex;
+    gap: 0.7rem;
+    font-size: 0.94rem;
+    line-height: 1.5;
+  }
+  ul.steps li::before {
+    content: "";
+    flex-shrink: 0;
+    width: 0.5rem;
+    height: 0.5rem;
+    margin-top: 0.5em;
+    border-radius: 1px;
+    background: var(--accent);
+  }
+  ol.steps { counter-reset: step; }
+  ol.steps li::before {
+    counter-increment: step;
+    content: counter(step);
+    flex-shrink: 0;
+    font-family: ui-monospace, "SF Mono", Consolas, monospace;
+    font-size: 0.78rem;
+    font-weight: 600;
+    width: 1.4rem;
+    height: 1.4rem;
+    border-radius: 50%;
+    background: var(--bg-raised);
+    border: 1px solid var(--line-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-muted);
+  }
+
+  ul.steps.no {
+    opacity: 0.75;
+  }
+  ul.steps.no li::before {
+    background: transparent;
+    border: 1.5px solid var(--ink-muted);
+    width: 0.5rem;
+    height: 0.5rem;
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.6rem;
+  }
+  @media (max-width: 620px) {
+    .two-col { grid-template-columns: 1fr; }
+  }
+
+  /* ---- Code blocks ---- */
+  .codeblock {
+    background: var(--mono-bg);
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    padding: 1rem 1.2rem;
+    overflow-x: auto;
+    font-family: ui-monospace, "SF Mono", Consolas, "Liberation Mono", monospace;
+    font-size: 0.8rem;
+    line-height: 1.6;
+    white-space: pre;
+    margin: 0.5rem 0 1.3rem;
+    color: var(--ink);
+  }
+
+  /* ---- Tables ---- */
+  .tablewrap { overflow-x: auto; margin: 0.4rem 0 0.2rem; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    min-width: 480px;
+  }
+  th, td {
+    text-align: left;
+    padding: 0.6rem 0.7rem;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  thead th {
+    font-family: ui-monospace, "SF Mono", Consolas, monospace;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--ink-muted);
+    font-weight: 600;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  td.mono, th.mono { font-family: ui-monospace, "SF Mono", Consolas, monospace; font-variant-numeric: tabular-nums; }
+  tr:last-child td { border-bottom: none; }
+  td.why { color: var(--ink-muted); font-size: 0.87rem; }
+
+  .price-tier { font-weight: 700; }
+  .price-num { font-variant-numeric: tabular-nums; font-family: ui-monospace, "SF Mono", Consolas, monospace; }
+
+  /* ---- Callouts ---- */
+  .callout {
+    border: 1px solid var(--line-strong);
+    border-left: 3px solid var(--warn);
+    background: var(--warn-bg);
+    border-radius: 3px;
+    padding: 1rem 1.2rem;
+    margin: 1.2rem 0;
+  }
+  .callout .label {
+    font-family: ui-monospace, "SF Mono", Consolas, monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--warn);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+  .callout ul { margin: 0; padding-left: 1.1rem; }
+  .callout li { font-size: 0.92rem; margin-bottom: 0.3rem; }
+
+  .callout.good {
+    border-left-color: var(--good);
+    background: var(--good-bg);
+  }
+  .callout.good .label { color: var(--good); }
+
+  /* ---- Footer action block ---- */
+  .finalblock {
+    margin-top: 3rem;
+    padding: 1.6rem 1.6rem 1.7rem;
+    background: var(--bg-raised);
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+  }
+  .finalblock h2.display { font-size: 1.2rem; margin-bottom: 0.3rem; }
+  .finalblock .objective { margin-bottom: 1rem; }
+
+  footer.pagefoot {
+    margin-top: 3rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.78rem;
+    color: var(--ink-muted);
+    font-family: ui-monospace, "SF Mono", Consolas, monospace;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  a { color: var(--accent); }
+
+  ::selection { background: var(--accent); color: var(--accent-ink); }
+</style>
+
+<div class="page">
+
+  <header class="top">
+    <span class="eyebrow">Plan de lancement — v1</span>
+    <h1 class="display">Photo it. Shop it.</h1>
+    <div class="codename">nom de travail : SCOUT — sous réserve de vérification domaine/marque (Phase 0)</div>
+    <p class="tagline">Extension de navigateur + dashboard SaaS qui identifie un vêtement ou une sneaker à partir d'une image et retrouve où l'acheter moins cher, dans la bonne taille — sans qu'il faille connaître le milieu.</p>
+    <div class="tagrow">
+      <span class="tag"><b>Cible</b> Passionnés mode/sneakers non-initiés</span>
+      <span class="tag"><b>Modèle</b> Abonnement SaaS + extension gratuite</span>
+      <span class="tag"><b>Équipe</b> Solo dev</span>
+      <span class="tag"><b>Objectif doc</b> Ordre des étapes, du cadrage au MVP monétisé</span>
+    </div>
+  </header>
+
+  <div class="mechanism">
+    <div class="mstep">
+      <div class="n">01 — ENTRÉE</div>
+      <h3>Image</h3>
+      <p>Clic droit sur une image (Instagram, Pinterest, site marchand) ou upload manuel sur le site.</p>
+    </div>
+    <div class="mstep">
+      <div class="n">02 — TRAITEMENT</div>
+      <h3>Identification</h3>
+      <p>Reconnaissance de l'article (type, marque probable) puis recherche des mêmes produits en vente.</p>
+    </div>
+    <div class="mstep">
+      <div class="n">03 — SORTIE</div>
+      <h3>Résultats + suivi</h3>
+      <p>Prix comparés, dispo dans ta taille, alerte email si le prix baisse ou si ça revient en stock.</p>
+    </div>
+  </div>
+
+  <section class="phase">
+    <div class="phase-head">
+      <span class="phase-num mono">PHASE 0</span>
+      <h2 class="display">Valider avant de coder</h2>
+    </div>
+    <p class="objective"><b>Durée visée : 1–2 semaines.</b> Objectif : ne pas passer trois mois à construire avant de savoir si quelqu'un en veut vraiment.</p>
+    <ul class="steps">
+      <li>Écrire la proposition de valeur en une phrase et la tester à froid auprès de 5–10 personnes hors du "milieu" mode/sneakers.</li>
+      <li>Construire une landing page avec liste d'attente email — le taux d'inscription est le premier vrai signal de demande.</li>
+      <li>Étude concurrentielle ciblée : Google Lens, Pinterest Lens, ASOS Style Match, apps de legit-check. Noter précisément ce qui leur manque (suivi de prix, alertes, tailles) pour justifier le besoin.</li>
+      <li>Vérifier la faisabilité et le coût des sources de données produits (voir Phase 2) avant de s'engager.</li>
+      <li>Choisir un nom de travail définitif, vérifier la disponibilité du domaine et du nom sur le Chrome Web Store.</li>
+      <li>Décision Go / No-Go basée sur le signal de la landing page, pas sur l'intuition seule.</li>
+    </ul>
+  </section>
+
+  <section class="phase">
+    <div class="phase-head">
+      <span class="phase-num mono">PHASE 1</span>
+      <h2 class="display">Cadrer le MVP</h2>
+    </div>
+    <p class="objective">Objectif : le plus petit produit qui prouve la boucle de valeur complète — <b>de l'image jusqu'à l'alerte</b> — sans rien construire d'accessoire.</p>
+    <div class="two-col">
+      <div>
+        <h4 class="sublabel">Dans le scope</h4>
+        <ul class="steps">
+          <li>Extension : bouton clic-droit "Identifier" sur une image, sur n'importe quelle page.</li>
+          <li>Identification : catégorie + marque probable de l'article (viser "assez bon", pas parfait).</li>
+          <li>3 à 6 articles similaires ou identiques trouvés chez des marchands, avec prix.</li>
+          <li>Compte utilisateur + wishlist pour sauvegarder un résultat.</li>
+          <li>Une alerte simple : email si le prix d'un article sauvegardé baisse.</li>
+          <li>Paywall : X scans gratuits par mois, illimité en payant.</li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="sublabel">Hors scope (repoussé)</h4>
+        <ul class="steps no">
+          <li>Score anti-contrefaçon.</li>
+          <li>Recommandation de taille cross-marques.</li>
+          <li>Alternatives moins chères ("dupes").</li>
+          <li>Application mobile native.</li>
+          <li>Notifications push (l'email suffit au début).</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="phase">
+    <div class="phase-head">
+      <span class="phase-num mono">PHASE 2</span>
+      <h2 class="display">Choix techniques</h2>
+    </div>
+    <p class="objective">Objectif : des briques standards, rapides à assembler seul — pas de modèle d'IA à entraîner, pas d'infra à maintenir.</p>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Brique</th><th>Choix recommandé</th><th>Pourquoi</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="mono">Extension</td><td>Chrome Manifest&nbsp;V3</td><td class="why">Compatible Edge et Brave sans travail supplémentaire ; le marché le plus large pour un seul code.</td></tr>
+          <tr><td class="mono">Identification image</td><td>API vision multimodale existante</td><td class="why">Décrit l'article sans entraîner de modèle maison — pas de dataset, pas de GPU à gérer.</td></tr>
+          <tr><td class="mono">Catalogue &amp; prix</td><td>API Google Shopping (via SerpApi) au démarrage, puis Awin une fois du trafic à montrer</td><td class="why">Awin (et les autres réseaux) lient l'accès aux données produit à l'agrément par marchand — pas seulement la commission. Sans trafic, pas d'agrément, donc pas de catalogue non plus. Une API généraliste évite ce blocage le temps de démarrer.</td></tr>
+          <tr><td class="mono">Backend</td><td>API Node ou Python + Postgres</td><td class="why">Stack standard, large documentation pour un solo dev.</td></tr>
+          <tr><td class="mono">Auth &amp; paiement</td><td>Clerk / Auth.js + Stripe Billing</td><td class="why">Évite de coder soi-même la gestion des abonnements et des essais.</td></tr>
+          <tr><td class="mono">Alertes</td><td>Resend ou Postmark</td><td class="why">Emails transactionnels simples, pas d'infra d'envoi à opérer.</td></tr>
+          <tr><td class="mono">Hébergement</td><td>Vercel ou Railway</td><td class="why">Déploiement rapide, pas de serveur à administrer.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="phase">
+    <div class="phase-head">
+      <span class="phase-num mono">PHASE 3</span>
+      <h2 class="display">Construction du MVP</h2>
+    </div>
+    <p class="objective">Ordre recommandé — chaque étape dépend de la précédente, à ne pas paralléliser en solo.</p>
+    <ol class="steps">
+      <li>Backend : un endpoint qui prend une image et retourne une identification. Le tester seul (Postman) avant toute interface.</li>
+      <li>Backend : connecter l'API Google Shopping (via SerpApi), faire correspondre un résultat identifié à des articles réels et leurs prix — sans attendre d'agrément d'affiliation.</li>
+      <li>Extension : capture d'image (clic droit) → appel de l'API → affichage du résultat dans un popup minimal.</li>
+      <li>Dashboard web : authentification, page "mes scans", wishlist avec bouton de sauvegarde.</li>
+      <li>Système d'alerte : tâche planifiée qui revérifie le prix des articles sauvegardés, envoie un email si baisse.</li>
+      <li>Paywall : intégration Stripe, limite des scans gratuits, écran de mise à niveau.</li>
+      <li>Onboarding minimal : trois écrans qui expliquent le concept à l'installation de l'extension.</li>
+    </ol>
+  </section>
+
+  <section class="phase">
+    <div class="phase-head">
+      <span class="phase-num mono">PHASE 4</span>
+      <h2 class="display">Lancement</h2>
+    </div>
+    <ul class="steps">
+      <li>Beta fermée avec les inscrits de la liste d'attente (Phase 0) avant tout lancement public — corriger les frictions à petite échelle.</li>
+      <li>Soumission au Chrome Web Store : compter 1 à 3 semaines de délai de review, à anticiper largement.</li>
+      <li>Lancement public sur Product Hunt et dans des communautés mode/sneakers grand public — pas les communautés "insider", qui ne sont pas la cible.</li>
+      <li>Contenu de lancement centré sur un seul message : pas besoin de connaître la hype pour bien acheter.</li>
+      <li>Démarrage de l'acquisition payante (Meta / TikTok Ads) une fois le MVP en ligne et la boucle de valeur validée en beta — pas avant, pour ne pas payer des clics vers un produit qui n'existe pas encore.</li>
+      <li>Candidature aux programmes marchands Awin dès qu'il y a du trafic réel à montrer — bascule progressive de l'API Google Shopping vers Awin marchand par marchand, sans tout couper d'un coup.</li>
+    </ul>
+  </section>
+
+  <section class="phase">
+    <div class="phase-head">
+      <span class="phase-num mono">PHASE 5</span>
+      <h2 class="display">Monétisation</h2>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Palier</th><th>Prix</th><th>Inclus</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="price-tier">Gratuit</td>
+            <td class="price-num">0&nbsp;€</td>
+            <td class="why">5 scans par mois, résultats de base, pas d'alertes.</td>
+          </tr>
+          <tr>
+            <td class="price-tier">Essentiel</td>
+            <td class="price-num">6,99&nbsp;€ / mois</td>
+            <td class="why">Scans illimités, wishlist jusqu'à 15 articles suivis, alertes prix &amp; stock en digest quotidien.</td>
+          </tr>
+          <tr>
+            <td class="price-tier">Pro</td>
+            <td class="price-num">11,99&nbsp;€ / mois</td>
+            <td class="why">Tout Essentiel + wishlist illimitée, alertes en temps réel, historique de prix (graphique), couverture élargie aux plateformes de revente, accès prioritaire aux futures features (Phase 6).</td>
+          </tr>
+          <tr>
+            <td class="price-tier">Commission</td>
+            <td class="price-num">variable</td>
+            <td class="why">% affiliation sur les achats via les liens de résultats — actif sur tous les paliers, en complément de l'abonnement.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h4 class="sublabel">Métriques à suivre dès le lancement</h4>
+    <ul class="steps">
+      <li>Taux de conversion gratuit → payant.</li>
+      <li>Churn mensuel des abonnés.</li>
+      <li>Scans par utilisateur par semaine — signal direct de la valeur de retour (repeat value).</li>
+      <li>Répartition du revenu : abonnements vs commissions d'affiliation.</li>
+    </ul>
+  </section>
+
+  <section class="phase">
+    <div class="phase-head">
+      <span class="phase-num mono">PHASE 6</span>
+      <h2 class="display">Après le MVP, si la traction est là</h2>
+    </div>
+    <ul class="steps">
+      <li>Score de confiance anti-contrefaçon sur les articles scannés.</li>
+      <li>Suggestions d'alternatives moins chères ("dupes").</li>
+      <li>Recommandation de taille cross-marques en fonction des pointures déjà possédées, comme feature premium.</li>
+      <li>Application mobile native, si la demande le justifie.</li>
+    </ul>
+  </section>
+
+  <section class="phase">
+    <div class="phase-head">
+      <span class="phase-num mono">ANNEXE</span>
+      <h2 class="display">Cahier des charges technique</h2>
+    </div>
+    <p class="objective">Spécifications concrètes pour démarrer l'implémentation avec un agent de code sans ambiguïté sur les choix techniques — à transmettre tel quel.</p>
+
+    <h4 class="sublabel">Stack définitif</h4>
+    <ul class="steps">
+      <li><b>apps/web</b> — Next.js 14 (App Router, TypeScript), hébergé sur Vercel. Dashboard + routes API.</li>
+      <li><b>apps/extension</b> — Chrome Manifest V3, TypeScript, sans framework.</li>
+      <li><b>Base de données</b> — Postgres + Prisma ORM.</li>
+      <li><b>Authentification</b> — Clerk.</li>
+      <li><b>Paiement</b> — Stripe Billing (Checkout + Customer Portal).</li>
+      <li><b>Identification image</b> — API Claude (vision), décrit l'article à partir de l'image.</li>
+      <li><b>Catalogue produits</b> — SerpApi (Google Shopping) au démarrage, Awin en complément une fois agréé.</li>
+      <li><b>Emails</b> — Resend.</li>
+      <li><b>Tâche planifiée</b> — Vercel Cron pour la revérification quotidienne des prix.</li>
+    </ul>
+
+    <h4 class="sublabel">Structure du repo</h4>
+    <div class="codeblock">scout/
+  apps/
+    web/            # Next.js — dashboard + routes API
+    extension/      # Chrome Manifest V3
+  packages/
+    shared/         # types & constantes partagés web/extension
+  prisma/
+    schema.prisma
+  .env.example</div>
+
+    <h4 class="sublabel">Modèle de données (Prisma)</h4>
+    <div class="codeblock">model User {
+  id               String   @id @default(cuid())
+  email            String   @unique
+  plan             Plan     @default(FREE)
+  stripeCustomerId String?
+  createdAt        DateTime @default(now())
+  scans            ScannedItem[]
+  wishlist         WishlistItem[]
+}
+
+model ScannedItem {
+  id          String   @id @default(cuid())
+  userId      String
+  sourceUrl   String?
+  imageUrl    String
+  category    String?
+  brand       String?
+  description String?
+  createdAt   DateTime @default(now())
+  user        User             @relation(fields: [userId], references: [id])
+  matches     MatchedProduct[]
+}
+
+model MatchedProduct {
+  id            String   @id @default(cuid())
+  scannedItemId String
+  merchantName  String
+  title         String
+  price         Decimal
+  currency      String
+  url           String
+  imageUrl      String
+  inStock       Boolean  @default(true)
+  source        Source   @default(GOOGLE_SHOPPING)
+  fetchedAt     DateTime @default(now())
+  scannedItem   ScannedItem @relation(fields: [scannedItemId], references: [id])
+}
+
+model WishlistItem {
+  id               String   @id @default(cuid())
+  userId           String
+  matchedProductId String
+  lastKnownPrice   Decimal
+  createdAt        DateTime @default(now())
+  user             User     @relation(fields: [userId], references: [id])
+}
+
+enum Plan   { FREE ESSENTIEL PRO }
+enum Source { GOOGLE_SHOPPING AWIN }</div>
+
+    <h4 class="sublabel">Contrat API</h4>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Méthode</th><th>Route</th><th>Rôle</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">POST</td><td class="mono">/api/scan</td><td class="why">Reçoit une image, appelle Claude (identification) puis SerpApi (produits correspondants), retourne les résultats.</td></tr>
+          <tr><td class="mono">GET</td><td class="mono">/api/wishlist</td><td class="why">Liste les articles sauvegardés de l'utilisateur.</td></tr>
+          <tr><td class="mono">POST</td><td class="mono">/api/wishlist</td><td class="why">Sauvegarde un produit trouvé dans la wishlist.</td></tr>
+          <tr><td class="mono">DELETE</td><td class="mono">/api/wishlist/:id</td><td class="why">Retire un article de la wishlist.</td></tr>
+          <tr><td class="mono">GET</td><td class="mono">/api/scans</td><td class="why">Historique des scans de l'utilisateur.</td></tr>
+          <tr><td class="mono">POST</td><td class="mono">/api/stripe/checkout</td><td class="why">Crée une session Stripe Checkout pour un palier donné.</td></tr>
+          <tr><td class="mono">POST</td><td class="mono">/api/stripe/webhook</td><td class="why">Reçoit les événements d'abonnement Stripe.</td></tr>
+          <tr><td class="mono">GET</td><td class="mono">/api/cron/price-check</td><td class="why">Tâche planifiée quotidienne : revérifie les prix de la wishlist, déclenche les emails d'alerte.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4 class="sublabel">Squelette manifest.json (extension)</h4>
+    <div class="codeblock">{
+  "manifest_version": 3,
+  "name": "Scout",
+  "version": "0.1.0",
+  "permissions": ["contextMenus", "activeTab", "storage"],
+  "host_permissions": ["https://scout.app/*"],
+  "background": { "service_worker": "background.js" },
+  "action": { "default_popup": "popup.html" },
+  "icons": { "128": "icon-128.png" }
+}</div>
+
+    <h4 class="sublabel">Variables d'environnement</h4>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Variable</th><th>Usage</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">DATABASE_URL</td><td class="why">Connexion Postgres.</td></tr>
+          <tr><td class="mono">ANTHROPIC_API_KEY</td><td class="why">Identification d'image (Claude vision).</td></tr>
+          <tr><td class="mono">SERPAPI_KEY</td><td class="why">Recherche produits Google Shopping.</td></tr>
+          <tr><td class="mono">CLERK_SECRET_KEY / CLERK_PUBLISHABLE_KEY</td><td class="why">Authentification.</td></tr>
+          <tr><td class="mono">STRIPE_SECRET_KEY / STRIPE_WEBHOOK_SECRET</td><td class="why">Paiement et abonnements.</td></tr>
+          <tr><td class="mono">STRIPE_PRICE_ESSENTIEL / STRIPE_PRICE_PRO</td><td class="why">Identifiants des deux paliers (6,99&nbsp;€ / 11,99&nbsp;€).</td></tr>
+          <tr><td class="mono">RESEND_API_KEY</td><td class="why">Envoi des emails d'alerte.</td></tr>
+          <tr><td class="mono">NEXT_PUBLIC_APP_URL</td><td class="why">URL publique du dashboard, utilisée par l'extension.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4 class="sublabel">Définition de "terminé" — Phase 3</h4>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Étape</th><th>Critère de fin</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">1</td><td class="why">Appel Postman sur /api/scan retourne une identification cohérente sur 10 images tests.</td></tr>
+          <tr><td class="mono">2</td><td class="why">La même route retourne 3 à 6 produits réels avec prix, pour ces 10 images.</td></tr>
+          <tr><td class="mono">3</td><td class="why">Clic droit sur une image dans Chrome affiche les résultats dans le popup de l'extension.</td></tr>
+          <tr><td class="mono">4</td><td class="why">Un utilisateur se connecte, voit son historique et sauvegarde un résultat en wishlist.</td></tr>
+          <tr><td class="mono">5</td><td class="why">Un changement de prix simulé en base déclenche un email réel via Resend.</td></tr>
+          <tr><td class="mono">6</td><td class="why">Le 6ᵉ scan gratuit du mois est bloqué, avec un écran d'upgrade menant à Stripe Checkout.</td></tr>
+          <tr><td class="mono">7</td><td class="why">Une installation propre de l'extension affiche les 3 écrans d'onboarding avant le premier scan.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="callout good">
+    <span class="label">Tranché</span>
+    <ul>
+      <li>Nom de travail : <b>Scout</b> — sous réserve de vérification domaine/marque/Chrome Web Store (Phase 0).</li>
+      <li>Deux paliers payants : Essentiel à 6,99&nbsp;€/mois, Pro à 11,99&nbsp;€/mois (+ palier gratuit).</li>
+      <li>Catalogue en MVP : API Google Shopping (SerpApi), sans agrément marchand à attendre. Awin en second temps, une fois du trafic à montrer.</li>
+      <li>Acquisition payante après le lancement du MVP, pas avant.</li>
+    </ul>
+  </div>
+
+  <div class="callout">
+    <span class="label">Décisions restantes</span>
+    <ul>
+      <li>Vérifier la disponibilité de "Scout" (domaine, marque, Chrome Web Store) avant de le figer.</li>
+      <li>Budget de temps avant le Go / No-Go de la Phase 0.</li>
+    </ul>
+  </div>
+
+  <div class="finalblock">
+    <h2 class="display">Les deux premières semaines</h2>
+    <p class="objective">Avant d'écrire une ligne de code produit :</p>
+    <ol class="steps">
+      <li>Écrire la proposition de valeur en une phrase.</li>
+      <li>Construire la landing page et la liste d'attente.</li>
+      <li>Lister 10 personnes hors "milieu mode" à qui la montrer.</li>
+      <li>Tester à la main, sans code, l'identification d'image sur 20 exemples réels avec l'API vision choisie — pour valider la précision avant d'investir dans le reste.</li>
+    </ol>
+  </div>
+
+  <footer class="pagefoot">
+    <span>SCOUT — plan de lancement</span>
+    <span>v1 · 2026-08-10</span>
+  </footer>
+
+</div>

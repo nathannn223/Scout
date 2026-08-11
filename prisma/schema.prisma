@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String   @id @default(cuid())
+  email            String   @unique
+  plan             Plan     @default(FREE)
+  stripeCustomerId String?
+  createdAt        DateTime @default(now())
+  scans            ScannedItem[]
+  wishlist         WishlistItem[]
+}
+
+model ScannedItem {
+  id          String   @id @default(cuid())
+  userId      String
+  sourceUrl   String?
+  imageUrl    String
+  category    String?
+  brand       String?
+  description String?
+  createdAt   DateTime @default(now())
+  user        User             @relation(fields: [userId], references: [id])
+  matches     MatchedProduct[]
+}
+
+model MatchedProduct {
+  id            String   @id @default(cuid())
+  scannedItemId String
+  merchantName  String
+  title         String
+  price         Decimal
+  currency      String
+  url           String
+  imageUrl      String
+  inStock       Boolean  @default(true)
+  source        Source   @default(GOOGLE_SHOPPING)
+  fetchedAt     DateTime @default(now())
+  scannedItem   ScannedItem @relation(fields: [scannedItemId], references: [id])
+}
+
+model WishlistItem {
+  id               String    @id @default(cuid())
+  userId           String
+  matchedProductId String
+  lastKnownPrice   Decimal
+  // Prix plancher optionnel choisi par l'utilisateur. Si absent, l'alerte se
+  // déclenche sur toute baisse sous lastKnownPrice (comportement par défaut).
+  targetPrice      Decimal?
+  // Empêche de renvoyer un email chaque jour tant que le prix reste sous le
+  // seuil — remis à null si le prix repasse au-dessus (pour ré-alerter à la
+  // prochaine baisse).
+  alertSentAt      DateTime?
+  createdAt        DateTime  @default(now())
+  user             User      @relation(fields: [userId], references: [id])
+}
+
+enum Plan {
+  FREE
+  DECOUVERTE
+  ESSENTIEL
+  PRO
+}
+
+enum Source {
+  GOOGLE_SHOPPING
+  AWIN
+}
