@@ -153,6 +153,15 @@ Après plusieurs allers-retours sur la direction (sombre/sobre → blanc/audacie
   - Image OpenGraph (aperçu de partage sur réseaux sociaux) non configurée, faute d'asset.
   - Déploiement Vercel proprement dit — nécessite de connecter le compte GitHub/Vercel de l'utilisateur via leur interface web, impossible à faire à sa place. Vercel fournit une URL `*.vercel.app` gratuite sans domaine personnalisé, donc pas bloqué par l'absence de nom de domaine final.
 
+### Déploiement — fait et fonctionnel
+Site en ligne sur **https://scout-web-pied.vercel.app** (repo `nathannn223/Scout`, branche `master`). Trois problèmes rencontrés pendant le déploiement, tous résolus :
+- **Erreur ESLint bloquante en prod, invisible en local** : `react/no-unescaped-entities` sur des guillemets droits non échappés dans `cgu/page.tsx`. Le build local n'avait jamais fait remonter cette erreur (cache ESLint local resté "propre" d'une exécution précédente) — reproduit et corrigé après un `rm -rf .next node_modules/.cache` local pour forcer les mêmes conditions que Vercel ("Previous build caches not available"). Réflexe à garder : tester avec un cache vide avant de pousser si un doute existe.
+- **`Missing publishableKey` (Clerk)** : les variables d'environnement n'étaient simplement pas encore renseignées dans Vercel au premier essai — normal, pas un bug.
+- **`TypeError: Invalid URL`** : `NEXT_PUBLIC_APP_URL` collé sans le préfixe `https://` (Vercel affiche parfois le domaine nu dans son UI, sans le schéma) — cassait `new URL(APP_URL)` dans `layout.tsx` (`metadataBase`) au moment du prerendering.
+- Webhook Stripe de prod créé directement via l'API (`we_1U3JgPRq9IGBEwy77Fdyk1Ym`, pointé sur `/api/stripe/webhook`) — son secret (`whsec_0eHL...`) va uniquement dans les variables d'environnement Vercel, **pas** dans le `.env` local (qui garde le secret donné par `stripe listen` pour les tests en local — deux environnements, deux secrets différents).
+- Clerk : aucune configuration supplémentaire nécessaire pour l'instant — clés de développement (`pk_test_`/`sk_test_`), qui fonctionnent depuis n'importe quel domaine sans allowlist. À revisiter seulement en passant à une vraie instance de production Clerk (nécessite un domaine custom).
+- Connexion, inscription et flux payant testés et fonctionnels sur l'URL de prod.
+
 ## Problèmes connus / dette technique
 
 - **Wishlist toujours un peu lente au clic**, même si le cœur se met à jour visuellement à l'instant (mise à jour optimiste côté client dans `wishlist-button.tsx`). La requête réseau réelle en arrière-plan reste lente : `requireUser()` fait un aller-retour vers l'API de Clerk (`currentUser()`) PUIS un upsert Prisma vers Neon (pooled, hébergé) — au moins deux aller-retours réseau externes par action. Pas corrigé plus loin, jugé acceptable pour le MVP puisque le retour visuel est instantané.
