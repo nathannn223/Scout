@@ -60,15 +60,22 @@ model MatchedProduct {
 }
 
 model WishlistItem {
-  id               String   @id @default(cuid())
+  id               String    @id @default(cuid())
   userId           String
   matchedProductId String
   lastKnownPrice   Decimal
-  createdAt        DateTime @default(now())
-  user             User     @relation(fields: [userId], references: [id])
+  targetPrice      Decimal?
+  alertSentAt      DateTime?
+  createdAt        DateTime  @default(now())
+  user             User      @relation(fields: [userId], references: [id])
 }
 
-enum Plan   { FREE ESSENTIEL PRO }
+enum Plan {
+  FREE
+  DECOUVERTE
+  ESSENTIEL
+  PRO
+}
 enum Source { GOOGLE_SHOPPING AWIN }
 ```
 
@@ -85,9 +92,12 @@ enum Source { GOOGLE_SHOPPING AWIN }
 | GET | `/api/cron/price-check` | Tâche planifiée quotidienne : revérifie les prix wishlist, déclenche les emails d'alerte. |
 
 ## Monétisation
-- Gratuit — 0€, 5 scans/mois, pas d'alertes.
-- Essentiel — 6,99€/mois : scans illimités, wishlist jusqu'à 15 articles, alertes en digest quotidien.
-- Pro — 11,99€/mois : wishlist illimitée, alertes temps réel, historique de prix, couverture élargie revente.
+> Mis à jour suite à la réflexion pricing menée après le lancement — voir `PROGRESS.md` pour le raisonnement complet (métrique de valeur, ancrage entre paliers). Diffère de la version d'origine de ce document : un 4ᵉ palier (Découverte) a été ajouté, les limites de scans sont désormais différenciées par palier (pas juste "illimité" au-delà du gratuit), et le prix Pro a été relevé.
+
+- **Gratuit** — 0€ : 1 scan/mois (web uniquement, l'extension est réservée aux paliers payants), pas de wishlist, pas d'alertes.
+- **Découverte** — 3,99€/mois : 9 scans/mois, extension Chrome incluse, wishlist jusqu'à 5 articles, **pas d'alertes de prix** (différenciateur volontaire vers Essentiel).
+- **Essentiel** — 6,99€/mois : 25 scans/mois, wishlist jusqu'à 15 articles, jusqu'à 5 alertes de prix actives (vérification quotidienne via cron).
+- **Pro** — 14,99€/mois : scans illimités, wishlist illimitée, alertes illimitées avec **vérification immédiate** dès la définition d'un prix cible (pas d'attente du cycle quotidien).
 - Commission d'affiliation (Awin, à partir de la Phase 4) sur tous les paliers, en complément.
 
 ## Ordre de construction (Phase 3 du plan — ne pas paralléliser)
@@ -117,7 +127,9 @@ Score anti-contrefaçon, recommandation de taille cross-marques, alternatives mo
 ```
 
 ## Variables d'environnement attendues
-`DATABASE_URL`, `ANTHROPIC_API_KEY`, `SERPAPI_KEY`, `CLERK_SECRET_KEY`, `CLERK_PUBLISHABLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_ESSENTIEL`, `STRIPE_PRICE_PRO`, `RESEND_API_KEY`, `NEXT_PUBLIC_APP_URL`.
+`DATABASE_URL`, `ANTHROPIC_API_KEY`, `SERPAPI_KEY`, `BLOB_READ_WRITE_TOKEN`, `CLERK_SECRET_KEY`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_DECOUVERTE`, `STRIPE_PRICE_ESSENTIEL`, `STRIPE_PRICE_PRO`, `RESEND_API_KEY`, `CRON_SECRET`, `NEXT_PUBLIC_APP_URL`.
+
+> Piège vécu pendant le build : la clé publique Clerk **doit** s'appeler `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` (préfixe `NEXT_PUBLIC_` obligatoire, lu en dur par le SDK Clerk) — `CLERK_PUBLISHABLE_KEY` sans préfixe échoue silencieusement (mode "keyless", aucune vérification de session). Voir `PROGRESS.md` pour le détail complet.
 
 ## Nom
 Nom de travail : **Scout** — vérifier disponibilité domaine/marque/Chrome Web Store avant de le figer définitivement.

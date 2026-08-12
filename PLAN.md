@@ -29,11 +29,14 @@ Nom de travail : **Scout**. "CopIt" écarté (déjà pris par copit.to, un bot d
   - Bascule progressive de SerpApi vers Awin, sans tout couper d'un coup.
 
 ## Phase 5 — Monétisation
+> Mis à jour après la première itération pricing (voir `PROGRESS.md`) — un 4ᵉ palier Découverte a été ajouté comme "pied dans la porte" à bas prix, les scans sont plafonnés par palier plutôt que juste "illimité au-delà du gratuit", et le prix Pro a été relevé pour créer un vrai écart d'ancrage avec Essentiel.
+
 | Palier | Prix | Inclus |
 |---|---|---|
-| Gratuit | 0€ | 5 scans/mois, résultats de base, pas d'alertes |
-| Essentiel | 6,99€/mois | Scans illimités, wishlist 15 articles, alertes en digest quotidien |
-| Pro | 11,99€/mois | Wishlist illimitée, alertes temps réel, historique de prix, couverture élargie revente |
+| Gratuit | 0€ | 1 scan/mois, web uniquement, pas d'extension, pas d'alertes |
+| Découverte | 3,99€/mois | 9 scans/mois, extension Chrome, wishlist 5 articles, pas d'alertes |
+| Essentiel | 6,99€/mois | 25 scans/mois, wishlist 15 articles, jusqu'à 5 alertes de prix (vérification quotidienne) |
+| Pro | 14,99€/mois | Scans et wishlist illimités, alertes illimitées avec vérification immédiate |
 | Commission | variable | % affiliation Awin sur tous les paliers, en complément (dès Phase 4) |
 
 **Métriques à suivre dès le lancement :**

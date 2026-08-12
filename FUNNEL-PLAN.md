@@ -49,6 +49,8 @@ C'est la pièce la plus importante du funnel : c'est elle qui produit l'aha mome
 
 Ne pas réutiliser tel quel l'écran `billing-section.tsx` du dashboard (pensé pour un utilisateur déjà engagé) — celui-ci doit être pensé pour quelqu'un qui vient de voir un résultat il y a 5 secondes et n'a jamais vu de grille tarifaire avant.
 
+> **Note de mise à jour** : le mockup ci-dessous date de la conception initiale (2 paliers). La version réellement construite (`components/paywall-prompt.tsx`) a 3 paliers payants — Découverte 3,99€, Essentiel 6,99€, Pro 14,99€ — avec un tableau de fonctionnalités aligné plutôt que des listes libres par carte. Voir `PROGRESS.md` pour le détail. Le raisonnement psychologique ci-dessous reste valable ; l'ajout de Découverte en dessous d'Essentiel renforce encore l'effet d'ancrage décrit plus bas (Essentiel devient le choix "raisonnable" par contraste avec Découverte *et* Pro, pas seulement Pro).
+
 **Structure recommandée** (gabarit "Feature Lock" du skill paywalls, adapté) :
 
 ```
