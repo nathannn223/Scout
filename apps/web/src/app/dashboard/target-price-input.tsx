@@ -173,41 +173,54 @@ export function TargetPriceInput({
   const textSize = large ? "text-sm" : "text-xs";
   const iconSize = large ? "h-3.5 w-3.5" : "h-3 w-3";
 
-  return (
-    <div className="flex items-center gap-2">
+  if (targetPrice === null) {
+    return (
       <button
         type="button"
         onClick={() => setEditing(true)}
         className={`flex items-center gap-1.5 ${textSize} text-muted-foreground hover:text-foreground`}
       >
-        {targetPrice !== null ? (
-          <>
-            <Bell className={iconSize} aria-hidden />
-            Alerte sous {targetPrice.toFixed(2)} {currency}
-            {daysLeft !== null && (
-              <span className="text-muted-foreground/70">
-                · expire dans {daysLeft} j{daysLeft > 1 ? "ours" : "our"}
-              </span>
-            )}
-            <Pencil className={iconSize} aria-hidden />
-          </>
-        ) : (
-          <>
-            <Bell className={iconSize} aria-hidden />
-            Définir un prix cible
-          </>
-        )}
+        <Bell className={iconSize} aria-hidden />
+        Définir un prix cible
       </button>
-      {targetPrice !== null && (
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-0.5">
+      <div className="flex items-center justify-between gap-3">
         <button
           type="button"
-          onClick={cancelAlert}
-          disabled={isPending}
-          aria-label="Supprimer l'alerte"
-          className="text-muted-foreground hover:text-destructive disabled:opacity-50"
+          onClick={() => setEditing(true)}
+          className={`flex min-w-0 items-center gap-1.5 whitespace-nowrap ${textSize} text-muted-foreground hover:text-foreground`}
         >
-          <Trash2 className={iconSize} aria-hidden />
+          <Bell className={`${iconSize} shrink-0`} aria-hidden />
+          Alerte sous {targetPrice.toFixed(2)} {currency}
         </button>
+        <div className="flex shrink-0 items-center gap-1.5">
+          <button
+            type="button"
+            onClick={() => setEditing(true)}
+            aria-label="Modifier l'alerte"
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <Pencil className={iconSize} aria-hidden />
+          </button>
+          <button
+            type="button"
+            onClick={cancelAlert}
+            disabled={isPending}
+            aria-label="Supprimer l'alerte"
+            className="text-muted-foreground hover:text-destructive disabled:opacity-50"
+          >
+            <Trash2 className={iconSize} aria-hidden />
+          </button>
+        </div>
+      </div>
+      {daysLeft !== null && (
+        <p className={`${large ? "text-xs" : "text-[11px]"} text-muted-foreground/70`}>
+          Expire dans {daysLeft} jour{daysLeft > 1 ? "s" : ""}
+        </p>
       )}
     </div>
   );
