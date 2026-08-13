@@ -13,6 +13,7 @@ export function TargetPriceInput({
   expiresAt,
   currency,
   defaultEditing = false,
+  large = false,
 }: {
   wishlistItemId: string;
   targetPrice: number | null;
@@ -25,6 +26,10 @@ export function TargetPriceInput({
    * directly — used when the user just clicked a dedicated "créer une
    * alerte" action, not the small inline prompt. */
   defaultEditing?: boolean;
+  /** Scales up the collapsed view's text/icons — for contexts with bigger
+   * cards (dashboard home) where the default size reads too small next to
+   * everything else. Other call sites keep the compact default. */
+  large?: boolean;
 }) {
   const router = useRouter();
   const [editing, setEditing] = useState(defaultEditing);
@@ -165,27 +170,30 @@ export function TargetPriceInput({
     );
   }
 
+  const textSize = large ? "text-sm" : "text-xs";
+  const iconSize = large ? "h-3.5 w-3.5" : "h-3 w-3";
+
   return (
     <div className="flex items-center gap-2">
       <button
         type="button"
         onClick={() => setEditing(true)}
-        className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+        className={`flex items-center gap-1.5 ${textSize} text-muted-foreground hover:text-foreground`}
       >
         {targetPrice !== null ? (
           <>
-            <Bell className="h-3 w-3" aria-hidden />
+            <Bell className={iconSize} aria-hidden />
             Alerte sous {targetPrice.toFixed(2)} {currency}
             {daysLeft !== null && (
               <span className="text-muted-foreground/70">
                 · expire dans {daysLeft} j{daysLeft > 1 ? "ours" : "our"}
               </span>
             )}
-            <Pencil className="h-3 w-3" aria-hidden />
+            <Pencil className={iconSize} aria-hidden />
           </>
         ) : (
           <>
-            <Bell className="h-3 w-3" aria-hidden />
+            <Bell className={iconSize} aria-hidden />
             Définir un prix cible
           </>
         )}
@@ -198,7 +206,7 @@ export function TargetPriceInput({
           aria-label="Supprimer l'alerte"
           className="text-muted-foreground hover:text-destructive disabled:opacity-50"
         >
-          <Trash2 className="h-3 w-3" aria-hidden />
+          <Trash2 className={iconSize} aria-hidden />
         </button>
       )}
     </div>

@@ -108,6 +108,7 @@ export default async function DashboardPage() {
                         targetPrice={item.targetPrice ? Number(item.targetPrice) : null}
                         expiresAt={item.expiresAt}
                         currency={product.currency}
+                        large
                       />
                     </div>
                   </StopPropagation>
