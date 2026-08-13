@@ -18,7 +18,7 @@ export async function PATCH(
     return NextResponse.json({ error: "Wishlist item not found." }, { status: 404 });
   }
 
-  let body: { targetPrice?: unknown };
+  let body: { targetPrice?: unknown; durationMonths?: unknown };
   try {
     body = await request.json();
   } catch {
@@ -33,6 +33,18 @@ export async function PATCH(
   }
   if (typeof body.targetPrice === "number" && body.targetPrice <= 0) {
     return NextResponse.json({ error: "'targetPrice' must be positive." }, { status: 400 });
+  }
+
+  // How long the alert stays active before it needs manual reactivation —
+  // bounds the worst case cost of a forgotten alert instead of running it
+  // forever. Only meaningful when (re)setting a price; clamped server-side
+  // regardless of what the client sends.
+  let durationMonths = 3;
+  if (body.targetPrice !== null && body.durationMonths !== undefined) {
+    if (typeof body.durationMonths !== "number" || !Number.isFinite(body.durationMonths)) {
+      return NextResponse.json({ error: "'durationMonths' must be a number." }, { status: 400 });
+    }
+    durationMonths = Math.min(6, Math.max(1, Math.round(body.durationMonths)));
   }
 
   // Setting a real alert is the paid action; clearing one back to null is
@@ -67,6 +79,11 @@ export async function PATCH(
     }
   }
 
+  const expiresAt =
+    body.targetPrice !== null
+      ? new Date(Date.now() + durationMonths * 30 * 24 * 60 * 60 * 1000)
+      : null;
+
   const updated = await db.wishlistItem.update({
     where: { id: params.id },
     data: {
@@ -74,6 +91,9 @@ export async function PATCH(
       // A new target means the old alert no longer applies — allow a fresh
       // one to fire if the price already sits below the new threshold.
       alertSentAt: null,
+      expiresAt,
+      expiryReminder14dSentAt: null,
+      expiryReminder24hSentAt: null,
     },
     include: { user: true },
   });
@@ -81,8 +101,13 @@ export async function PATCH(
   // Pro gets its price checked the moment it's set instead of waiting for
   // the next daily cron run — the one piece of "temps réel" in "alertes en
   // temps réel" that's actually real. Fire-and-forget: the target price is
-  // already saved either way, this is a best-effort head start.
-  if (body.targetPrice !== null && user.plan === "PRO") {
+  // already saved either way, this is a best-effort head start. Throttled
+  // to once/hour per item so repeatedly editing the target price doesn't
+  // repeatedly trigger a fresh SerpApi search.
+  const recentlyChecked =
+    updated.priceCheckedAt !== null &&
+    Date.now() - updated.priceCheckedAt.getTime() < 60 * 60 * 1000;
+  if (body.targetPrice !== null && user.plan === "PRO" && !recentlyChecked) {
     checkAndAlertWishlistItem(updated).catch((err) => {
       console.error("[wishlist] immediate price check failed for item", updated.id, err);
     });

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { checkAndAlertWishlistItem } from "@/lib/price-check";
+import { checkAndAlertWishlistItem, sendExpiryReminderIfDue } from "@/lib/price-check";
 
 // Never statically evaluate this route — it sends real emails and writes to
 // the database, so it must only ever run on an actual invocation (a real
@@ -19,19 +19,37 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  const items = await db.wishlistItem.findMany({ include: { user: true } });
+  // Only wishlist items with an active alert cost anything to keep fresh —
+  // an item without a targetPrice never sends an email, so revalidating its
+  // price daily was pure waste (this used to scale with wishlist size,
+  // uncapped on Pro, instead of with actual alert count).
+  const items = await db.wishlistItem.findMany({
+    where: { targetPrice: { not: null } },
+    include: { user: true },
+  });
 
   let checked = 0;
   let alertsSent = 0;
   let skipped = 0;
+  let expired = 0;
   let errored = 0;
 
   for (const item of items) {
     checked++;
+
+    // Reminder is independent of the price check below — a Resend failure
+    // here shouldn't skip the actual price check for the same item.
+    try {
+      await sendExpiryReminderIfDue(item);
+    } catch (err) {
+      console.error("[cron] expiry reminder failed for wishlist item", item.id, err);
+    }
+
     try {
       const result = await checkAndAlertWishlistItem(item);
       if (result === "alerted") alertsSent++;
       else if (result === "skipped") skipped++;
+      else if (result === "expired") expired++;
     } catch (err) {
       // Distinct from `skipped`: this item DID match and DID cross the
       // threshold, but something failed while recording/sending the alert
@@ -42,5 +60,5 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  return NextResponse.json({ checked, alertsSent, skipped, errored });
+  return NextResponse.json({ checked, alertsSent, skipped, expired, errored });
 }

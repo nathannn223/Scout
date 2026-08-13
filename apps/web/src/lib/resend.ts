@@ -56,6 +56,44 @@ export async function sendPriceDropAlert(alert: PriceDropAlert): Promise<void> {
   }
 }
 
+export interface AlertExpiringEmail {
+  to: string;
+  productTitle: string;
+  expiresInDays: number;
+}
+
+/**
+ * Transactional reminder that an alert's tracking window is about to run
+ * out (see WishlistItem.expiresAt) — not a "still interested?" re-engagement
+ * nudge, which was deliberately dropped in favor of a user-chosen duration.
+ */
+export async function sendAlertExpiringEmail(alert: AlertExpiringEmail): Promise<void> {
+  const resend = getClient();
+
+  const { error } = await resend.emails.send({
+    from: FROM_ADDRESS,
+    to: alert.to,
+    subject: `Ton alerte de prix expire bientôt : ${alert.productTitle}`,
+    html: `
+      <div style="font-family: -apple-system, sans-serif; max-width: 480px; margin: 0 auto;">
+        <p style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: #565b4f;">Scout — alerte prix</p>
+        <h1 style="font-size: 20px; margin: 8px 0;">${escapeHtml(alert.productTitle)}</h1>
+        <p style="color: #565b4f; margin: 0 0 20px;">
+          Le suivi de prix pour cet article s&rsquo;arrête dans ${alert.expiresInDays === 1 ? "1 jour" : `${alert.expiresInDays} jours`}
+          si tu ne fais rien. Retourne dans tes favoris pour le prolonger.
+        </p>
+        <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/favoris" style="display: inline-block; background: #ff4a26; color: #fff8f4; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: 600;">
+          Voir mes favoris
+        </a>
+      </div>
+    `,
+  });
+
+  if (error) {
+    throw new Error(`Resend error: ${error.message}`);
+  }
+}
+
 function escapeHtml(value: string): string {
   return value
     .replace(/&/g, "&amp;")

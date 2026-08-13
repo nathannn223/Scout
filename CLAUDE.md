@@ -66,8 +66,26 @@ model WishlistItem {
   lastKnownPrice   Decimal
   targetPrice      Decimal?
   alertSentAt      DateTime?
+  priceCheckedAt   DateTime?
+  expiresAt                DateTime?
+  expiryReminder14dSentAt  DateTime?
+  expiryReminder24hSentAt  DateTime?
   createdAt        DateTime  @default(now())
   user             User      @relation(fields: [userId], references: [id])
+  observations     PriceObservation[]
+}
+
+model PriceObservation {
+  id             String   @id @default(cuid())
+  wishlistItemId String
+  merchantName   String
+  title          String
+  price          Decimal
+  currency       String
+  url            String
+  trusted        Boolean  @default(false)
+  checkedAt      DateTime @default(now())
+  wishlistItem   WishlistItem @relation(fields: [wishlistItemId], references: [id])
 }
 
 enum Plan {

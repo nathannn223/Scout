@@ -57,8 +57,39 @@ model WishlistItem {
   // seuil — remis à null si le prix repasse au-dessus (pour ré-alerter à la
   // prochaine baisse).
   alertSentAt      DateTime?
+  // Dernière fois qu'une vérification (cron ou immédiate) a réellement
+  // tourné pour cet article — sert à limiter la fréquence des appels
+  // SerpApi (throttle immédiat, garde-fou Pro).
+  priceCheckedAt   DateTime?
+  // Durée de suivi choisie par l'utilisateur à la création de l'alerte
+  // (1/3/6 mois max) — passé cette date, targetPrice est remis à null
+  // automatiquement et l'alerte doit être réactivée manuellement.
+  expiresAt                DateTime?
+  expiryReminder14dSentAt  DateTime?
+  expiryReminder24hSentAt  DateTime?
   createdAt        DateTime  @default(now())
   user             User      @relation(fields: [userId], references: [id])
+  observations     PriceObservation[]
+}
+
+// Un enregistrement par marchand accepté par le pipeline de matching
+// (apps/web/src/lib/product-match.ts) à chaque vérification — permet de
+// suivre l'article sur tous les marchands retrouvés, pas seulement le lien
+// d'origine, et sert d'historique pour la bande de plausibilité de prix.
+model PriceObservation {
+  id             String   @id @default(cuid())
+  wishlistItemId String
+  merchantName   String
+  title          String
+  price          Decimal
+  currency       String
+  url            String
+  // Passé par le pipeline de matching automatique (texte + prix + domaine +
+  // corroboration) — seules les observations trusted peuvent déclencher une
+  // alerte de prix.
+  trusted        Boolean  @default(false)
+  checkedAt      DateTime @default(now())
+  wishlistItem   WishlistItem @relation(fields: [wishlistItemId], references: [id])
 }
 
 enum Plan {

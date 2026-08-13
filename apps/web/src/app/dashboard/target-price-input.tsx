@@ -18,6 +18,7 @@ export function TargetPriceInput({
   const router = useRouter();
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(targetPrice?.toString() ?? "");
+  const [durationMonths, setDurationMonths] = useState(3);
   const [isPending, setIsPending] = useState(false);
   const [paywallMessage, setPaywallMessage] = useState<string | null>(null);
 
@@ -30,7 +31,7 @@ export function TargetPriceInput({
       const res = await fetch(`/api/wishlist/${wishlistItemId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ targetPrice: parsed }),
+        body: JSON.stringify({ targetPrice: parsed, durationMonths }),
       });
       if (res.ok) {
         setEditing(false);
@@ -77,6 +78,17 @@ export function TargetPriceInput({
           autoFocus
         />
         <span className="text-xs text-muted-foreground">{currency}</span>
+        <select
+          value={durationMonths}
+          onChange={(e) => setDurationMonths(Number(e.target.value))}
+          disabled={isPending}
+          aria-label="Durée de suivi"
+          className="h-7 rounded border border-border bg-card px-1 text-xs text-muted-foreground"
+        >
+          <option value={1}>1 mois</option>
+          <option value={3}>3 mois</option>
+          <option value={6}>6 mois</option>
+        </select>
         <Button size="sm" className="h-7 px-2 text-xs" onClick={save} disabled={isPending}>
           OK
         </Button>
