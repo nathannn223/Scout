@@ -2,7 +2,7 @@
 
 > Ce fichier complète `CLAUDE.md` (spec figée) et `PLAN.md` (business/roadmap) : il capture **l'état réel du build**, les décisions prises en cours de route qui vont au-delà de la spec initiale, les pièges déjà résolus, et ce qu'il reste à faire. À lire en premier dans une nouvelle session pour reprendre exactement où on s'est arrêté.
 
-Dernière mise à jour : 2026-08-11.
+Dernière mise à jour : 2026-08-13.
 
 ## État actuel — Phase 3 (ordre de construction de CLAUDE.md)
 
@@ -192,3 +192,13 @@ Alertes prix plancher : testées et confirmées fonctionnelles (vraie clé Resen
 1. Vraie landing page (actuellement un placeholder de démonstration du design system) — d'autant plus important maintenant que le compte est obligatoire dès le premier scan : c'est elle qui devra convaincre avant l'installation de l'extension.
 2. Disponibilité par taille pour les alertes de prix (voir section dédiée ci-dessus — nécessite probablement Awin/Phase 4).
 3. Plafond wishlist Essentiel (15 articles) et différenciation digest/temps réel des alertes selon le palier — non implémenté, voir section "Paywall".
+
+## 2026-08-13 — Prix Découverte relevé à 4,99€, résultats gratuits floutés
+
+- **Prix Découverte relevé une deuxième fois, de 3,99€ à 4,99€/mois** — même mécanique Stripe que pour Pro plus haut : nouveau `Price` créé (`price_1U3tBjRq9IGBEwy7jnKtCWUS`, 499 cents), défini `default_price` du produit Découverte existant, ancien prix (`price_1U3EWgRq9IGBEwy7y3WQSqly`) archivé après coup. `.env` local et `paywall-prompt.tsx` mis à jour. **⚠️ Vercel n'a pas encore reçu la nouvelle valeur** : la variable d'environnement `STRIPE_PRICE_DECOUVERTE` en production pointe toujours vers l'ancien prix archivé — un checkout Découverte échouera tant qu'elle n'est pas mise à jour dans le dashboard Vercel + redeploy déclenché.
+- **Résultats de scan floutés pour les comptes FREE** — demande explicite de l'utilisateur : le scan gratuit doit prouver que le produit a été trouvé (le prix reste lisible) sans laisser l'utilisateur atteindre le marchand sans payer.
+  - `ScanResponse` (`packages/shared/src/types.ts`) gagne un champ `locked: boolean`, calculé côté serveur (`user.plan === "FREE"`) dans `/api/scan` et `/api/scans` (historique consommé par l'extension) — jamais recalculé côté client, pour qu'un compte FREE ne puisse pas contourner en modifiant l'état local.
+  - **`apps/web/src/components/match-list.tsx`** (nouveau, partagé) : remplace les deux grilles de résultats dupliquées (`try-widget.tsx` et `dashboard/historique/page.tsx`). Quand `locked` est vrai — image, titre et marchand flous (`blur-sm`, non cliquables, `aria-hidden`), prix toujours net. Cliquer n'importe où sur une carte verrouillée (ou le bouton ♡ remplacé par une icône cadenas `lucide-react`) affiche un `<PaywallPrompt>` partagé au lieu de naviguer.
+  - `dashboard/historique/page.tsx` passe désormais `locked={user.plan === "FREE"}` — empêche un compte FREE de contourner la restriction en consultant un ancien scan plutôt que le résultat live.
+  - Contrainte Next.js respectée en construisant `MatchList` : `Prisma.Decimal` (prix côté historique) n'est pas sérialisable server→client component, donc converti en `number` (`Number(match.price)`) avant de passer les props, comme c'était déjà fait pour l'affichage avant ce chantier.
+- Build complet vérifié après ces changements (`tsc --noEmit` sur `apps/web` et `apps/extension`, `next build` avec cache vidé, `esbuild` extension) — tout passe sans erreur.

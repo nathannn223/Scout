@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
-import { WishlistButton } from "../wishlist-button";
+import { MatchList } from "@/components/match-list";
 
 export default async function HistoriquePage() {
   const user = await requireUser();
@@ -57,43 +57,20 @@ export default async function HistoriquePage() {
                 </div>
               </div>
               {scan.matches.length > 0 && (
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  {scan.matches.map((match) => (
-                    <div
-                      key={match.id}
-                      className="flex items-center gap-3 rounded-md border border-border bg-background p-3"
-                    >
-                      {match.imageUrl && (
-                        <Image
-                          src={match.imageUrl}
-                          alt=""
-                          width={40}
-                          height={40}
-                          unoptimized
-                          className="h-10 w-10 shrink-0 rounded bg-card object-contain"
-                        />
-                      )}
-                      <div className="min-w-0 flex-1">
-                        <a
-                          href={match.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="block truncate text-sm font-medium hover:underline"
-                        >
-                          {match.title}
-                        </a>
-                        <p className="text-xs text-muted-foreground">
-                          {match.merchantName} · {Number(match.price).toFixed(2)}{" "}
-                          {match.currency}
-                        </p>
-                      </div>
-                      <WishlistButton
-                        matchedProductId={match.id}
-                        wishlistItemId={wishlistedProductIds.get(match.id) ?? null}
-                      />
-                    </div>
-                  ))}
-                </div>
+                <MatchList
+                  matches={scan.matches.map((match) => ({
+                    id: match.id,
+                    merchantName: match.merchantName,
+                    title: match.title,
+                    price: Number(match.price),
+                    currency: match.currency,
+                    url: match.url,
+                    imageUrl: match.imageUrl,
+                    wishlistItemId: wishlistedProductIds.get(match.id) ?? null,
+                  }))}
+                  locked={user.plan === "FREE"}
+                  currentPlan={user.plan}
+                />
               )}
             </div>
           ))}

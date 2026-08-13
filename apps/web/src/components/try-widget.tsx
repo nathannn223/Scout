@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import { PaywallPrompt } from "@/components/paywall-prompt";
-import { WishlistButton } from "@/app/dashboard/wishlist-button";
+import { MatchList } from "@/components/match-list";
 import { EXCLUDE_PLANS_FOR } from "@/lib/stripe";
 import type { ScanResponse } from "@scout/shared";
 import type { Plan } from "@prisma/client";
@@ -243,38 +243,12 @@ export function TryWidget({ currentPlan }: { currentPlan?: Plan } = {}) {
               Aucun produit trouvé pour cet article.
             </p>
           ) : (
-            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-              {result.matches.map((match) => (
-                <div
-                  key={match.id}
-                  className="flex items-center gap-3 rounded-xl border border-border bg-card p-3"
-                >
-                  {match.imageUrl && (
-                    <Image
-                      src={match.imageUrl}
-                      alt=""
-                      width={40}
-                      height={40}
-                      unoptimized
-                      className="h-10 w-10 shrink-0 rounded bg-background object-contain"
-                    />
-                  )}
-                  <div className="min-w-0 flex-1">
-                    <a
-                      href={match.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block truncate text-sm font-medium hover:underline"
-                    >
-                      {match.title}
-                    </a>
-                    <p className="text-xs text-muted-foreground">
-                      {match.merchantName} · {match.price.toFixed(2)} {match.currency}
-                    </p>
-                  </div>
-                  <WishlistButton matchedProductId={match.id} wishlistItemId={null} />
-                </div>
-              ))}
+            <div className="mt-4">
+              <MatchList
+                matches={result.matches.map((match) => ({ ...match, wishlistItemId: null }))}
+                locked={result.locked}
+                currentPlan={currentPlan}
+              />
             </div>
           )}
         </div>

@@ -39,6 +39,7 @@ export async function GET() {
           source: m.source,
         })
       ),
+      locked: user.plan === "FREE",
     })),
   };
 

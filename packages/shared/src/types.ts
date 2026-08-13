@@ -24,4 +24,5 @@ export interface ScanResponse {
     createdAt: string;
   } & Identification;
   matches: MatchedProductDTO[];
+  locked: boolean;
 }

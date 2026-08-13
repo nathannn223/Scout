@@ -226,6 +226,7 @@ export async function POST(request: NextRequest) {
         description: scan.description,
       },
       matches,
+      locked: user.plan === "FREE",
     };
 
     return NextResponse.json(body, { status: 200 });

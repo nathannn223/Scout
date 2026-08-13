@@ -34,7 +34,7 @@ Nom de travail : **Scout**. "CopIt" écarté (déjà pris par copit.to, un bot d
 | Palier | Prix | Inclus |
 |---|---|---|
 | Gratuit | 0€ | 1 scan/mois, web uniquement, pas d'extension, pas d'alertes |
-| Découverte | 3,99€/mois | 9 scans/mois, extension Chrome, wishlist 5 articles, pas d'alertes |
+| Découverte | 4,99€/mois | 9 scans/mois, extension Chrome, wishlist 5 articles, pas d'alertes |
 | Essentiel | 6,99€/mois | 25 scans/mois, wishlist 15 articles, jusqu'à 5 alertes de prix (vérification quotidienne) |
 | Pro | 14,99€/mois | Scans et wishlist illimités, alertes illimitées avec vérification immédiate |
 | Commission | variable | % affiliation Awin sur tous les paliers, en complément (dès Phase 4) |

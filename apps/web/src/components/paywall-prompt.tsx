@@ -24,7 +24,7 @@ const FEATURE_ROWS: FeatureRow[] = [
 ];
 
 const PLANS: { plan: PaidPlan; name: string; price: string; badge?: string; column: 0 | 1 | 2 }[] = [
-  { plan: "DECOUVERTE", name: "Découverte", price: "3,99€/mois", column: 0 },
+  { plan: "DECOUVERTE", name: "Découverte", price: "4,99€/mois", column: 0 },
   { plan: "ESSENTIEL", name: "Essentiel", price: "6,99€/mois", badge: "Le plus populaire", column: 1 },
   { plan: "PRO", name: "Pro", price: "14,99€/mois", column: 2 },
 ];
