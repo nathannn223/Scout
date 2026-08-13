@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Bell, Pencil, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PaywallPrompt } from "@/components/paywall-prompt";
@@ -26,10 +27,17 @@ export function TargetPriceInput({
   const [durationMonths, setDurationMonths] = useState(3);
   const [isPending, setIsPending] = useState(false);
   const [paywallMessage, setPaywallMessage] = useState<string | null>(null);
+  const [justCreated, setJustCreated] = useState(false);
 
   async function save() {
     const parsed = value.trim() === "" ? null : Number(value);
     if (parsed !== null && (Number.isNaN(parsed) || parsed <= 0)) return;
+
+    // Captured before the request: targetPrice (the prop) only changes once
+    // the parent re-fetches after router.refresh() below, so this closure
+    // value still reflects the pre-save state — reliable even though this
+    // component doesn't unmount between the two states.
+    const wasNewAlert = targetPrice === null;
 
     setIsPending(true);
     try {
@@ -39,8 +47,12 @@ export function TargetPriceInput({
         body: JSON.stringify({ targetPrice: parsed, durationMonths }),
       });
       if (res.ok) {
-        setEditing(false);
         router.refresh();
+        if (parsed !== null && wasNewAlert) {
+          setJustCreated(true);
+        } else {
+          setEditing(false);
+        }
         return;
       }
       const body = await res.json().catch(() => ({}));
@@ -68,35 +80,63 @@ export function TargetPriceInput({
     );
   }
 
+  if (justCreated) {
+    return (
+      <p className="text-xs text-muted-foreground">
+        Alerte créée ! Suis-la depuis ton{" "}
+        <Link href="/dashboard/alertes" className="font-medium text-foreground hover:underline">
+          tableau de bord
+        </Link>
+        .{" "}
+        <button
+          type="button"
+          onClick={() => {
+            setJustCreated(false);
+            setEditing(false);
+          }}
+          className="underline hover:text-foreground"
+        >
+          Fermer
+        </button>
+      </p>
+    );
+  }
+
   if (editing) {
     return (
-      <div className="flex items-center gap-1.5">
-        <input
-          type="number"
-          min="0"
-          step="0.01"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          placeholder="Prix cible"
-          className="h-7 w-20 rounded border border-border bg-card px-2 text-xs"
-          disabled={isPending}
-          autoFocus
-        />
-        <span className="text-xs text-muted-foreground">{currency}</span>
-        <select
-          value={durationMonths}
-          onChange={(e) => setDurationMonths(Number(e.target.value))}
-          disabled={isPending}
-          aria-label="Durée de suivi"
-          className="h-7 rounded border border-border bg-card px-1 text-xs text-muted-foreground"
-        >
-          <option value={1}>1 mois</option>
-          <option value={3}>3 mois</option>
-          <option value={6}>6 mois</option>
-        </select>
-        <Button size="sm" className="h-7 px-2 text-xs" onClick={save} disabled={isPending}>
-          OK
-        </Button>
+      <div className="flex flex-col gap-1.5">
+        <div className="flex items-center gap-1.5">
+          <input
+            type="number"
+            min="0"
+            step="0.01"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            placeholder="Prix cible"
+            className="h-7 w-20 rounded border border-border bg-card px-2 text-xs"
+            disabled={isPending}
+            autoFocus
+          />
+          <span className="text-xs text-muted-foreground">{currency}</span>
+          <select
+            value={durationMonths}
+            onChange={(e) => setDurationMonths(Number(e.target.value))}
+            disabled={isPending}
+            aria-label="Durée de suivi"
+            className="h-7 rounded border border-border bg-card px-1 text-xs text-muted-foreground"
+          >
+            <option value={1}>1 mois</option>
+            <option value={3}>3 mois</option>
+            <option value={6}>6 mois</option>
+          </select>
+          <Button size="sm" className="h-7 px-2 text-xs" onClick={save} disabled={isPending}>
+            OK
+          </Button>
+        </div>
+        <p className="max-w-xs text-[11px] leading-snug text-muted-foreground">
+          C&rsquo;est la durée pendant laquelle Scout va chercher en continu les meilleurs prix
+          pour cet article.
+        </p>
       </div>
     );
   }

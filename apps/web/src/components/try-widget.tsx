@@ -14,12 +14,15 @@ import type { Plan } from "@prisma/client";
 type Status = "idle" | "uploading" | "ready" | "identifying" | "done" | "limit" | "error";
 
 // Simulated but honest progress — /api/scan is a single request/response,
-// there's no real incremental signal to report. Stalls on the last step and
-// never claims 100% until the real result actually comes back.
-const IDENTIFY_STEPS = [
-  { label: "Analyse de l'image…", percent: 30 },
-  { label: "Recherche des prix…", percent: 60 },
-  { label: "Comparaison des marchands…", percent: 85 },
+// there's no real incremental signal to report. A real scan takes ~20-25s,
+// so the label changes at time thresholds and the bar eases toward 92%
+// asymptotically (never reaches it) — always visibly moving, never stuck at
+// a fixed step waiting, and never claims 100% before the real result lands.
+const IDENTIFY_LABELS = [
+  { at: 0, label: "Analyse de l'image…" },
+  { at: 5, label: "Identification du produit…" },
+  { at: 11, label: "Recherche des prix chez les marchands…" },
+  { at: 17, label: "Comparaison des résultats…" },
 ];
 
 export function TryWidget({
@@ -35,16 +38,15 @@ export function TryWidget({
   const [linkValue, setLinkValue] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ScanResponse | null>(null);
-  const [progressStep, setProgressStep] = useState(0);
+  const [elapsedMs, setElapsedMs] = useState(0);
 
   useEffect(() => {
     if (status !== "identifying") {
-      setProgressStep(0);
+      setElapsedMs(0);
       return;
     }
-    const interval = setInterval(() => {
-      setProgressStep((step) => Math.min(step + 1, IDENTIFY_STEPS.length - 1));
-    }, 1500);
+    const start = Date.now();
+    const interval = setInterval(() => setElapsedMs(Date.now() - start), 150);
     return () => clearInterval(interval);
   }, [status]);
 
@@ -138,6 +140,12 @@ export function TryWidget({
   }
 
   const showDropzone = status === "idle" || status === "uploading" || status === "ready";
+
+  const elapsedSec = elapsedMs / 1000;
+  const identifyPercent = Math.round(92 * (1 - Math.exp(-elapsedSec / 8)));
+  const identifyLabel =
+    [...IDENTIFY_LABELS].reverse().find((step) => elapsedSec >= step.at)?.label ??
+    IDENTIFY_LABELS[0].label;
 
   return (
     <div
@@ -250,11 +258,11 @@ export function TryWidget({
 
       {status === "identifying" && (
         <div className="flex w-full max-w-sm flex-col items-center gap-2">
-          <p className="text-sm text-muted-foreground">{IDENTIFY_STEPS[progressStep].label}</p>
+          <p className="text-sm text-muted-foreground">{identifyLabel}</p>
           <div className="h-1.5 w-full overflow-hidden rounded-full bg-border/40">
             <div
-              className="h-full rounded-full bg-primary transition-all duration-700 ease-out"
-              style={{ width: `${IDENTIFY_STEPS[progressStep].percent}%` }}
+              className="h-full rounded-full bg-primary transition-[width] duration-150 ease-linear"
+              style={{ width: `${identifyPercent}%` }}
             />
           </div>
         </div>

@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { WishlistButton } from "./wishlist-button";
 import { BillingSection } from "./billing-section";
+import { ClickableRow } from "@/components/clickable-row";
 
 export default async function DashboardPage() {
   const user = await requireUser();
@@ -62,8 +63,9 @@ export default async function DashboardPage() {
               const product = productsById.get(item.matchedProductId);
               if (!product) return null;
               return (
-                <div
+                <ClickableRow
                   key={item.id}
+                  href={`/dashboard/scans/${product.scannedItemId}`}
                   className="flex items-center gap-3 rounded-xl border border-border bg-card p-3"
                 >
                   {product.imageUrl && (
@@ -81,6 +83,7 @@ export default async function DashboardPage() {
                       href={product.url}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
                       className="block truncate text-sm font-medium hover:underline"
                     >
                       {product.title}
@@ -90,8 +93,10 @@ export default async function DashboardPage() {
                       {product.currency}
                     </p>
                   </div>
-                  <WishlistButton matchedProductId={product.id} wishlistItemId={item.id} />
-                </div>
+                  <div onClick={(e) => e.stopPropagation()}>
+                    <WishlistButton matchedProductId={product.id} wishlistItemId={item.id} />
+                  </div>
+                </ClickableRow>
               );
             })}
           </div>
@@ -113,8 +118,9 @@ export default async function DashboardPage() {
         ) : (
           <div className="flex flex-col gap-3">
             {recentScans.map((scan) => (
-              <div
+              <ClickableRow
                 key={scan.id}
+                href={`/dashboard/scans/${scan.id}`}
                 className="flex items-center gap-4 rounded-xl border border-border bg-card p-3"
               >
                 {scan.imageUrl && (
@@ -134,7 +140,7 @@ export default async function DashboardPage() {
                   </p>
                   <p className="truncate text-xs text-muted-foreground">{scan.description}</p>
                 </div>
-              </div>
+              </ClickableRow>
             ))}
           </div>
         )}

@@ -17,14 +17,12 @@ export function Hero() {
       >
         Achète au meilleur prix ce que tu vois sur internet.
       </h1>
-      <p
-        className={`text-balance leading-relaxed text-muted-foreground transition-all duration-500 ${
-          hasResult ? "mt-2 max-w-md text-sm" : "mt-6 max-w-lg text-[21px]"
-        }`}
-      >
-        Identifie n&rsquo;importe quel vêtement ou sneakers que tu vois et achète-le au
-        meilleur prix.
-      </p>
+      {!hasResult && (
+        <p className="mt-6 max-w-lg text-balance text-[21px] leading-relaxed text-muted-foreground">
+          Identifie n&rsquo;importe quel vêtement ou sneakers que tu vois et achète-le au
+          meilleur prix.
+        </p>
+      )}
 
       <div className="mt-9 w-full">
         <TryWidget onResultChange={setHasResult} />

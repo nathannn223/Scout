@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Heart, Bell, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ export function ScanResultHeader({
   matches: MatchedProductDTO[];
   currentPlan?: Plan;
 }) {
+  const router = useRouter();
   const [wishlistItemId, setWishlistItemId] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
   const [paywallMessage, setPaywallMessage] = useState<string | null>(null);
@@ -50,6 +52,7 @@ export function ScanResultHeader({
       }
       const created: { id: string } = await res.json();
       setWishlistItemId(created.id);
+      router.refresh();
       return created.id;
     } finally {
       setIsPending(false);
@@ -88,11 +91,11 @@ export function ScanResultHeader({
             <Button
               type="button"
               size="sm"
-              variant={wishlistItemId ? "secondary" : "default"}
+              variant="default"
               onClick={handleAddToFavorites}
               disabled={isPending}
             >
-              <Heart className={wishlistItemId ? "h-4 w-4 fill-primary text-primary" : "h-4 w-4"} aria-hidden />
+              <Heart className="h-4 w-4" fill={wishlistItemId ? "currentColor" : "none"} aria-hidden />
               {wishlistItemId ? "Ajouté aux favoris" : "Ajouter aux favoris"}
             </Button>
             <Button
