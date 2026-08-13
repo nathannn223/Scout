@@ -96,8 +96,8 @@ enum Source { GOOGLE_SHOPPING AWIN }
 
 - **Gratuit** — 0€ : 1 scan/mois (web uniquement, l'extension est réservée aux paliers payants), pas de wishlist, pas d'alertes.
 - **Découverte** — 4,99€/mois : 9 scans/mois, extension Chrome incluse, wishlist jusqu'à 5 articles, **pas d'alertes de prix** (différenciateur volontaire vers Essentiel).
-- **Essentiel** — 6,99€/mois : 25 scans/mois, wishlist jusqu'à 15 articles, jusqu'à 5 alertes de prix actives (vérification quotidienne via cron).
-- **Pro** — 14,99€/mois : scans illimités, wishlist illimitée, alertes illimitées avec **vérification immédiate** dès la définition d'un prix cible (pas d'attente du cycle quotidien).
+- **Essentiel** — 8,99€/mois : 25 scans/mois, wishlist jusqu'à 15 articles, jusqu'à 5 alertes de prix actives (vérification quotidienne via cron).
+- **Pro** — 15,99€/mois : scans illimités, wishlist illimitée, alertes illimitées avec **vérification immédiate** dès la définition d'un prix cible (pas d'attente du cycle quotidien).
 - Commission d'affiliation (Awin, à partir de la Phase 4) sur tous les paliers, en complément.
 
 ## Ordre de construction (Phase 3 du plan — ne pas paralléliser)

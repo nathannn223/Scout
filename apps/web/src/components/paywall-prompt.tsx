@@ -25,8 +25,8 @@ const FEATURE_ROWS: FeatureRow[] = [
 
 const PLANS: { plan: PaidPlan; name: string; price: string; badge?: string; column: 0 | 1 | 2 }[] = [
   { plan: "DECOUVERTE", name: "Découverte", price: "4,99€/mois", column: 0 },
-  { plan: "ESSENTIEL", name: "Essentiel", price: "6,99€/mois", badge: "Le plus populaire", column: 1 },
-  { plan: "PRO", name: "Pro", price: "14,99€/mois", column: 2 },
+  { plan: "ESSENTIEL", name: "Essentiel", price: "8,99€/mois", badge: "Le plus populaire", column: 1 },
+  { plan: "PRO", name: "Pro", price: "15,99€/mois", column: 2 },
 ];
 
 function FeatureLine({ label, value }: { label: string; value: Cell }) {
