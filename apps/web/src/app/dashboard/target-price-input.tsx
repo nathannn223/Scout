@@ -3,18 +3,23 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Bell, Pencil, X } from "lucide-react";
+import { Bell, Pencil, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PaywallPrompt } from "@/components/paywall-prompt";
 
 export function TargetPriceInput({
   wishlistItemId,
   targetPrice,
+  expiresAt,
   currency,
   defaultEditing = false,
 }: {
   wishlistItemId: string;
   targetPrice: number | null;
+  /** Duration window chosen at creation (see /api/wishlist/:id) — used only
+   * to show "expire dans N j"; required so every call site stays honest
+   * about whether it actually has this data. */
+  expiresAt: Date | null;
   currency: string;
   /** Skip the collapsed "Définir un prix cible" state and open the form
    * directly — used when the user just clicked a dedicated "créer une
@@ -28,6 +33,25 @@ export function TargetPriceInput({
   const [isPending, setIsPending] = useState(false);
   const [paywallMessage, setPaywallMessage] = useState<string | null>(null);
   const [justCreated, setJustCreated] = useState(false);
+
+  const daysLeft = expiresAt
+    ? Math.max(0, Math.ceil((new Date(expiresAt).getTime() - Date.now()) / 86_400_000))
+    : null;
+
+  async function cancelAlert() {
+    if (!window.confirm("Supprimer cette alerte de prix ?")) return;
+    setIsPending(true);
+    try {
+      const res = await fetch(`/api/wishlist/${wishlistItemId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ targetPrice: null }),
+      });
+      if (res.ok) router.refresh();
+    } finally {
+      setIsPending(false);
+    }
+  }
 
   async function save() {
     const parsed = value.trim() === "" ? null : Number(value);
@@ -142,23 +166,41 @@ export function TargetPriceInput({
   }
 
   return (
-    <button
-      type="button"
-      onClick={() => setEditing(true)}
-      className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
-    >
-      {targetPrice !== null ? (
-        <>
-          <Bell className="h-3 w-3" aria-hidden />
-          Alerte sous {targetPrice.toFixed(2)} {currency}
-          <Pencil className="h-3 w-3" aria-hidden />
-        </>
-      ) : (
-        <>
-          <Bell className="h-3 w-3" aria-hidden />
-          Définir un prix cible
-        </>
+    <div className="flex items-center gap-2">
+      <button
+        type="button"
+        onClick={() => setEditing(true)}
+        className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+      >
+        {targetPrice !== null ? (
+          <>
+            <Bell className="h-3 w-3" aria-hidden />
+            Alerte sous {targetPrice.toFixed(2)} {currency}
+            {daysLeft !== null && (
+              <span className="text-muted-foreground/70">
+                · expire dans {daysLeft} j{daysLeft > 1 ? "ours" : "our"}
+              </span>
+            )}
+            <Pencil className="h-3 w-3" aria-hidden />
+          </>
+        ) : (
+          <>
+            <Bell className="h-3 w-3" aria-hidden />
+            Définir un prix cible
+          </>
+        )}
+      </button>
+      {targetPrice !== null && (
+        <button
+          type="button"
+          onClick={cancelAlert}
+          disabled={isPending}
+          aria-label="Supprimer l'alerte"
+          className="text-muted-foreground hover:text-destructive disabled:opacity-50"
+        >
+          <Trash2 className="h-3 w-3" aria-hidden />
+        </button>
       )}
-    </button>
+    </div>
   );
 }

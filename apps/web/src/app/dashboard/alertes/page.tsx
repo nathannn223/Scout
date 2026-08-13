@@ -38,9 +38,9 @@ export default async function AlertesPage() {
             return (
               <div key={item.id} className="rounded-xl border border-border bg-card p-3">
                 <div className="flex items-center gap-3">
-                  {product.imageUrl && (
+                  {(item.imageUrl ?? product.imageUrl) && (
                     <Image
-                      src={product.imageUrl}
+                      src={item.imageUrl ?? product.imageUrl}
                       alt=""
                       width={40}
                       height={40}
@@ -68,6 +68,7 @@ export default async function AlertesPage() {
                   <TargetPriceInput
                     wishlistItemId={item.id}
                     targetPrice={Number(item.targetPrice)}
+                    expiresAt={item.expiresAt}
                     currency={product.currency}
                   />
                 </div>

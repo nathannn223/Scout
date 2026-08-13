@@ -41,7 +41,7 @@ export function ScanResultHeader({
       const res = await fetch("/api/wishlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ matchedProductId: cheapest.id }),
+        body: JSON.stringify({ matchedProductId: cheapest.id, imageUrl: scan.imageUrl }),
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
@@ -117,6 +117,7 @@ export function ScanResultHeader({
               <TargetPriceInput
                 wishlistItemId={wishlistItemId}
                 targetPrice={null}
+                expiresAt={null}
                 currency={cheapest.currency}
                 defaultEditing
               />

@@ -4,7 +4,13 @@ import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { ScanCard } from "@/components/scan-card";
 
-export default async function ScanDetailPage({ params }: { params: { id: string } }) {
+export default async function ScanDetailPage({
+  params,
+  searchParams,
+}: {
+  params: { id: string };
+  searchParams: { from?: string };
+}) {
   const user = await requireUser();
   if (!user) {
     return (
@@ -27,13 +33,19 @@ export default async function ScanDetailPage({ params }: { params: { id: string 
     wishlistItems.map((item) => [item.matchedProductId, item.id])
   );
 
+  // Explicit return link based on where the user actually came from, rather
+  // than relying on the browser's back button — deterministic regardless of
+  // the exact navigation path taken to reach this page.
+  const backHref = searchParams.from === "dashboard" ? "/dashboard" : "/dashboard/historique";
+
   return (
     <div className="flex flex-col gap-6">
-      <Link
-        href="/dashboard/historique"
-        className="text-sm text-muted-foreground hover:text-foreground"
-      >
-        ← Retour à l&rsquo;historique
+      <Link href={backHref} className="text-sm text-muted-foreground hover:text-foreground">
+        {searchParams.from === "dashboard" ? (
+          "← Retour au tableau de bord"
+        ) : (
+          <>← Retour à l&rsquo;historique</>
+        )}
       </Link>
       <ScanCard
         imageUrl={scan.imageUrl}

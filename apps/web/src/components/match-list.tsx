@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Lock } from "lucide-react";
-import { WishlistButton } from "@/app/dashboard/wishlist-button";
+import { MatchRowActions } from "@/components/match-row-actions";
 import { PaywallPrompt } from "@/components/paywall-prompt";
 import { EXCLUDE_PLANS_FOR } from "@/lib/stripe";
 import type { Plan } from "@prisma/client";
@@ -103,7 +103,12 @@ export function MatchList({
               <Lock className="h-4 w-4 shrink-0 text-muted-foreground" aria-label="Résultat verrouillé" />
             ) : (
               <div onClick={(e) => e.stopPropagation()}>
-                <WishlistButton matchedProductId={match.id} wishlistItemId={match.wishlistItemId} />
+                <MatchRowActions
+                  matchedProductId={match.id}
+                  wishlistItemId={match.wishlistItemId}
+                  currency={match.currency}
+                  currentPlan={currentPlan}
+                />
               </div>
             )}
           </div>

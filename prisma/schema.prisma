@@ -50,6 +50,10 @@ model WishlistItem {
   userId           String
   matchedProductId String
   lastKnownPrice   Decimal
+  // Renseigné uniquement par le favori "article entier" (photo importée par
+  // l'utilisateur) — un favori sur un marchand précis laisse ce champ null
+  // et retombe sur l'image du MatchedProduct (photo du marchand).
+  imageUrl         String?
   // Prix plancher optionnel choisi par l'utilisateur. Si absent, l'alerte se
   // déclenche sur toute baisse sous lastKnownPrice (comportement par défaut).
   targetPrice      Decimal?

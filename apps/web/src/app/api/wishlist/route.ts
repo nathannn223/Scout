@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  let body: { matchedProductId?: unknown };
+  let body: { matchedProductId?: unknown; imageUrl?: unknown };
   try {
     body = await request.json();
   } catch {
@@ -100,11 +100,17 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Product not found." }, { status: 404 });
   }
 
+  // Set only when favoriting "the whole article" (scan-result-header.tsx
+  // sends the user's own imported photo) — a per-merchant favorite from a
+  // MatchList row omits this, falling back to the merchant's own photo.
+  const imageUrl = typeof body.imageUrl === "string" && body.imageUrl.length > 0 ? body.imageUrl : null;
+
   const item = await db.wishlistItem.create({
     data: {
       userId: user.id,
       matchedProductId: product.id,
       lastKnownPrice: product.price,
+      imageUrl,
     },
   });
 

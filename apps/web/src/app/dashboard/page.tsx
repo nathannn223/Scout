@@ -3,6 +3,7 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { WishlistButton } from "./wishlist-button";
+import { TargetPriceInput } from "./target-price-input";
 import { BillingSection } from "./billing-section";
 import { ClickableRow } from "@/components/clickable-row";
 import { StopPropagation } from "@/components/stop-propagation";
@@ -66,37 +67,49 @@ export default async function DashboardPage() {
               return (
                 <ClickableRow
                   key={item.id}
-                  href={`/dashboard/scans/${product.scannedItemId}`}
-                  className="flex items-center gap-3 rounded-xl border border-border bg-card p-3"
+                  href={`/dashboard/scans/${product.scannedItemId}?from=dashboard`}
+                  className="flex flex-col gap-2 rounded-xl border border-border bg-card p-3"
                 >
-                  {product.imageUrl && (
-                    <Image
-                      src={product.imageUrl}
-                      alt=""
-                      width={40}
-                      height={40}
-                      unoptimized
-                      className="h-10 w-10 shrink-0 rounded bg-background object-contain"
-                    />
-                  )}
-                  <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-3">
+                    {(item.imageUrl ?? product.imageUrl) && (
+                      <Image
+                        src={item.imageUrl ?? product.imageUrl}
+                        alt=""
+                        width={40}
+                        height={40}
+                        unoptimized
+                        className="h-10 w-10 shrink-0 rounded bg-background object-contain"
+                      />
+                    )}
+                    <div className="min-w-0 flex-1">
+                      <StopPropagation>
+                        <a
+                          href={product.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block truncate text-sm font-medium hover:underline"
+                        >
+                          {product.title}
+                        </a>
+                      </StopPropagation>
+                      <p className="text-xs text-muted-foreground">
+                        {product.merchantName} · {Number(product.price).toFixed(2)}{" "}
+                        {product.currency}
+                      </p>
+                    </div>
                     <StopPropagation>
-                      <a
-                        href={product.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block truncate text-sm font-medium hover:underline"
-                      >
-                        {product.title}
-                      </a>
+                      <WishlistButton matchedProductId={product.id} wishlistItemId={item.id} />
                     </StopPropagation>
-                    <p className="text-xs text-muted-foreground">
-                      {product.merchantName} · {Number(product.price).toFixed(2)}{" "}
-                      {product.currency}
-                    </p>
                   </div>
                   <StopPropagation>
-                    <WishlistButton matchedProductId={product.id} wishlistItemId={item.id} />
+                    <div className="pl-[52px]">
+                      <TargetPriceInput
+                        wishlistItemId={item.id}
+                        targetPrice={item.targetPrice ? Number(item.targetPrice) : null}
+                        expiresAt={item.expiresAt}
+                        currency={product.currency}
+                      />
+                    </div>
                   </StopPropagation>
                 </ClickableRow>
               );
@@ -122,7 +135,7 @@ export default async function DashboardPage() {
             {recentScans.map((scan) => (
               <ClickableRow
                 key={scan.id}
-                href={`/dashboard/scans/${scan.id}`}
+                href={`/dashboard/scans/${scan.id}?from=dashboard`}
                 className="flex items-center gap-4 rounded-xl border border-border bg-card p-3"
               >
                 {scan.imageUrl && (
