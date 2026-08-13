@@ -60,7 +60,7 @@ export default async function DashboardPage() {
             Rien de sauvegardé pour l&rsquo;instant.
           </p>
         ) : (
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {recentWishlist.map((item) => {
               const product = productsById.get(item.matchedProductId);
               if (!product) return null;
@@ -68,17 +68,17 @@ export default async function DashboardPage() {
                 <ClickableRow
                   key={item.id}
                   href={`/dashboard/scans/${product.scannedItemId}?from=dashboard`}
-                  className="flex flex-col gap-2 rounded-xl border border-border bg-card p-3"
+                  className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     {(item.imageUrl ?? product.imageUrl) && (
                       <Image
                         src={item.imageUrl ?? product.imageUrl}
                         alt=""
-                        width={40}
-                        height={40}
+                        width={56}
+                        height={56}
                         unoptimized
-                        className="h-10 w-10 shrink-0 rounded bg-background object-contain"
+                        className="h-14 w-14 shrink-0 rounded bg-background object-contain"
                       />
                     )}
                     <div className="min-w-0 flex-1">
@@ -87,12 +87,12 @@ export default async function DashboardPage() {
                           href={product.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="block truncate text-sm font-medium hover:underline"
+                          className="block truncate text-base font-medium hover:underline"
                         >
                           {product.title}
                         </a>
                       </StopPropagation>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-sm text-muted-foreground">
                         {product.merchantName} · {Number(product.price).toFixed(2)}{" "}
                         {product.currency}
                       </p>
@@ -102,7 +102,7 @@ export default async function DashboardPage() {
                     </StopPropagation>
                   </div>
                   <StopPropagation>
-                    <div className="pl-[52px]">
+                    <div className="pl-[72px]">
                       <TargetPriceInput
                         wishlistItemId={item.id}
                         targetPrice={item.targetPrice ? Number(item.targetPrice) : null}
@@ -131,29 +131,29 @@ export default async function DashboardPage() {
         {recentScans.length === 0 ? (
           <p className="text-sm text-muted-foreground">Aucun scan pour l&rsquo;instant.</p>
         ) : (
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-4">
             {recentScans.map((scan) => (
               <ClickableRow
                 key={scan.id}
                 href={`/dashboard/scans/${scan.id}?from=dashboard`}
-                className="flex items-center gap-4 rounded-xl border border-border bg-card p-3"
+                className="flex items-center gap-5 rounded-xl border border-border bg-card p-4"
               >
                 {scan.imageUrl && (
                   <Image
                     src={scan.imageUrl}
                     alt=""
-                    width={56}
-                    height={56}
+                    width={72}
+                    height={72}
                     unoptimized
-                    className="h-14 w-14 shrink-0 rounded-md border border-border object-cover"
+                    className="h-18 w-18 shrink-0 rounded-md border border-border object-cover"
                   />
                 )}
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium">
+                  <p className="truncate text-base font-medium">
                     {[scan.brand, scan.category].filter(Boolean).join(" ") ||
                       "Article identifié"}
                   </p>
-                  <p className="truncate text-xs text-muted-foreground">{scan.description}</p>
+                  <p className="truncate text-sm text-muted-foreground">{scan.description}</p>
                 </div>
               </ClickableRow>
             ))}
