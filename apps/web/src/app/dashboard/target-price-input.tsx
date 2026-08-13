@@ -10,13 +10,18 @@ export function TargetPriceInput({
   wishlistItemId,
   targetPrice,
   currency,
+  defaultEditing = false,
 }: {
   wishlistItemId: string;
   targetPrice: number | null;
   currency: string;
+  /** Skip the collapsed "Définir un prix cible" state and open the form
+   * directly — used when the user just clicked a dedicated "créer une
+   * alerte" action, not the small inline prompt. */
+  defaultEditing?: boolean;
 }) {
   const router = useRouter();
-  const [editing, setEditing] = useState(false);
+  const [editing, setEditing] = useState(defaultEditing);
   const [value, setValue] = useState(targetPrice?.toString() ?? "");
   const [durationMonths, setDurationMonths] = useState(3);
   const [isPending, setIsPending] = useState(false);

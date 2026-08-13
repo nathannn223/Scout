@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { AuthNavLink } from "@/components/auth-nav-link";
 import { ExtensionNavLink } from "@/components/extension-nav-link";
-import { TryWidget } from "@/components/try-widget";
+import { Hero } from "@/components/hero";
 import { PaywallPrompt } from "@/components/paywall-prompt";
 
 const FEATURES = [
@@ -37,19 +37,7 @@ export default function Home() {
           className="bg-glow left-[68%] top-[-130px] h-[500px] w-[680px] -translate-x-1/2 animate-drift-a"
           aria-hidden
         />
-        <div className="relative z-10 flex w-full flex-col items-center">
-          <h1 className="max-w-3xl text-balance font-display text-[62px] font-bold leading-[1.04] tracking-tight sm:text-[78px]">
-            Achète au meilleur prix ce que tu vois sur internet.
-          </h1>
-          <p className="mt-6 max-w-lg text-balance text-[21px] leading-relaxed text-muted-foreground">
-            Identifie n&rsquo;importe quel vêtement ou sneakers que tu vois et
-            achète-le au meilleur prix.
-          </p>
-
-          <div className="mt-9 w-full">
-            <TryWidget />
-          </div>
-        </div>
+        <Hero />
       </section>
 
       <section className="relative z-10 mx-auto w-full max-w-6xl px-8 pb-24 pt-10">

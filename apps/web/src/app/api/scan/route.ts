@@ -132,9 +132,13 @@ export async function POST(request: NextRequest) {
   // Claude identification and the Google Lens visual search both only need
   // the image URL — run them concurrently instead of waiting on Claude
   // before starting the (usually slower) SerpApi call.
+  // Fetch more than the 6 the UI shows by default — MatchList reveals the
+  // rest via "Voir plus" client-side, no extra SerpApi call needed.
+  const MATCH_FETCH_LIMIT = 12;
+
   const [identifyOutcome, visualOutcome] = await Promise.allSettled([
     identify(imageUrl),
-    visualSearch(imageUrl),
+    visualSearch(imageUrl, MATCH_FETCH_LIMIT),
   ]);
 
   if (identifyOutcome.status === "rejected") {
@@ -187,7 +191,7 @@ export async function POST(request: NextRequest) {
       }
 
       if (rawMatches.length === 0) {
-        rawMatches = await searchProducts(identification.searchQuery);
+        rawMatches = await searchProducts(identification.searchQuery, MATCH_FETCH_LIMIT);
       }
 
       if (rawMatches.length > 0) {

@@ -1,18 +1,31 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import { PaywallPrompt } from "@/components/paywall-prompt";
 import { MatchList } from "@/components/match-list";
+import { ScanResultHeader } from "@/components/scan-result-header";
 import { EXCLUDE_PLANS_FOR } from "@/lib/stripe";
 import type { ScanResponse } from "@scout/shared";
 import type { Plan } from "@prisma/client";
 
 type Status = "idle" | "uploading" | "ready" | "identifying" | "done" | "limit" | "error";
 
-export function TryWidget({ currentPlan }: { currentPlan?: Plan } = {}) {
+// Simulated but honest progress — /api/scan is a single request/response,
+// there's no real incremental signal to report. Stalls on the last step and
+// never claims 100% until the real result actually comes back.
+const IDENTIFY_STEPS = [
+  { label: "Analyse de l'image…", percent: 30 },
+  { label: "Recherche des prix…", percent: 60 },
+  { label: "Comparaison des marchands…", percent: 85 },
+];
+
+export function TryWidget({
+  currentPlan,
+  onResultChange,
+}: { currentPlan?: Plan; onResultChange?: (hasResult: boolean) => void } = {}) {
   const router = useRouter();
   const { isSignedIn, isLoaded } = useUser();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -22,6 +35,22 @@ export function TryWidget({ currentPlan }: { currentPlan?: Plan } = {}) {
   const [linkValue, setLinkValue] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ScanResponse | null>(null);
+  const [progressStep, setProgressStep] = useState(0);
+
+  useEffect(() => {
+    if (status !== "identifying") {
+      setProgressStep(0);
+      return;
+    }
+    const interval = setInterval(() => {
+      setProgressStep((step) => Math.min(step + 1, IDENTIFY_STEPS.length - 1));
+    }, 1500);
+    return () => clearInterval(interval);
+  }, [status]);
+
+  useEffect(() => {
+    onResultChange?.(status === "done");
+  }, [status, onResultChange]);
 
   // The account gate fires on the very first click, before anything is
   // picked or uploaded — not after waiting on an upload to finish. Nothing
@@ -111,7 +140,11 @@ export function TryWidget({ currentPlan }: { currentPlan?: Plan } = {}) {
   const showDropzone = status === "idle" || status === "uploading" || status === "ready";
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col items-center gap-5">
+    <div
+      className={`mx-auto flex w-full flex-col items-center gap-5 ${
+        status === "done" ? "max-w-4xl" : "max-w-2xl"
+      }`}
+    >
       {showDropzone && (
         <div className="relative w-full">
           <div
@@ -216,7 +249,15 @@ export function TryWidget({ currentPlan }: { currentPlan?: Plan } = {}) {
       )}
 
       {status === "identifying" && (
-        <p className="text-sm text-muted-foreground">Identification en cours…</p>
+        <div className="flex w-full max-w-sm flex-col items-center gap-2">
+          <p className="text-sm text-muted-foreground">{IDENTIFY_STEPS[progressStep].label}</p>
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-border/40">
+            <div
+              className="h-full rounded-full bg-primary transition-all duration-700 ease-out"
+              style={{ width: `${IDENTIFY_STEPS[progressStep].percent}%` }}
+            />
+          </div>
+        </div>
       )}
 
       {status === "error" && error && <p className="text-sm text-destructive">{error}</p>}
@@ -231,25 +272,34 @@ export function TryWidget({ currentPlan }: { currentPlan?: Plan } = {}) {
 
       {status === "done" && result && (
         <div className="w-full text-left">
-          <p className="text-sm font-semibold">
-            {[result.scan.brand, result.scan.category].filter(Boolean).join(" ") ||
-              "Article identifié"}
-          </p>
-          {result.scan.description && (
-            <p className="mt-1 text-sm text-muted-foreground">{result.scan.description}</p>
-          )}
           {result.matches.length === 0 ? (
-            <p className="mt-4 text-sm text-muted-foreground">
-              Aucun produit trouvé pour cet article.
-            </p>
+            <>
+              <p className="text-sm font-semibold">
+                {[result.scan.brand, result.scan.category].filter(Boolean).join(" ") ||
+                  "Article identifié"}
+              </p>
+              {result.scan.description && (
+                <p className="mt-1 text-sm text-muted-foreground">{result.scan.description}</p>
+              )}
+              <p className="mt-4 text-sm text-muted-foreground">
+                Aucun produit trouvé pour cet article.
+              </p>
+            </>
           ) : (
-            <div className="mt-4">
-              <MatchList
-                matches={result.matches.map((match) => ({ ...match, wishlistItemId: null }))}
-                locked={result.locked}
+            <>
+              <ScanResultHeader
+                scan={result.scan}
+                matches={result.matches}
                 currentPlan={currentPlan}
               />
-            </div>
+              <div className="mt-4">
+                <MatchList
+                  matches={result.matches.map((match) => ({ ...match, wishlistItemId: null }))}
+                  locked={result.locked}
+                  currentPlan={currentPlan}
+                />
+              </div>
+            </>
           )}
         </div>
       )}

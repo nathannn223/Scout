@@ -32,11 +32,15 @@ export function MatchList({
   currentPlan?: Plan;
 }) {
   const [showPaywall, setShowPaywall] = useState(false);
+  const [showAll, setShowAll] = useState(false);
+
+  const VISIBLE_COUNT = 6;
+  const visibleMatches = showAll ? matches : matches.slice(0, VISIBLE_COUNT);
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        {matches.map((match) => (
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {visibleMatches.map((match) => (
           <div
             key={match.id}
             role={locked ? "button" : undefined}
@@ -49,7 +53,7 @@ export function MatchList({
                   }
                 : undefined
             }
-            className={`flex items-center gap-3 rounded-xl border border-border bg-card p-3 ${
+            className={`flex items-center gap-4 rounded-xl border border-border bg-card p-4 ${
               locked ? "cursor-pointer" : ""
             }`}
           >
@@ -57,17 +61,17 @@ export function MatchList({
               <Image
                 src={match.imageUrl}
                 alt=""
-                width={40}
-                height={40}
+                width={56}
+                height={56}
                 unoptimized
-                className={`h-10 w-10 shrink-0 rounded bg-background object-contain ${
+                className={`h-14 w-14 shrink-0 rounded bg-background object-contain ${
                   locked ? "blur-sm select-none" : ""
                 }`}
               />
             )}
             <div className="min-w-0 flex-1">
               {locked ? (
-                <p className="block truncate text-sm font-medium blur-sm select-none" aria-hidden>
+                <p className="block truncate text-base font-medium blur-sm select-none" aria-hidden>
                   {match.title}
                 </p>
               ) : (
@@ -76,12 +80,12 @@ export function MatchList({
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
-                  className="block truncate text-sm font-medium hover:underline"
+                  className="block truncate text-base font-medium hover:underline"
                 >
                   {match.title}
                 </a>
               )}
-              <p className="text-xs">
+              <p className="text-sm">
                 {locked ? (
                   <span className="select-none blur-sm" aria-hidden>
                     {match.merchantName}
@@ -105,6 +109,16 @@ export function MatchList({
           </div>
         ))}
       </div>
+
+      {!showAll && matches.length > VISIBLE_COUNT && (
+        <button
+          type="button"
+          onClick={() => setShowAll(true)}
+          className="self-center text-sm font-medium text-muted-foreground hover:text-foreground"
+        >
+          Voir plus ({matches.length - VISIBLE_COUNT} de plus)
+        </button>
+      )}
 
       {showPaywall && (
         <PaywallPrompt
