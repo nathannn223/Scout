@@ -36,16 +36,20 @@ export default async function ScanDetailPage({
   // Explicit return link based on where the user actually came from, rather
   // than relying on the browser's back button — deterministic regardless of
   // the exact navigation path taken to reach this page.
-  const backHref = searchParams.from === "dashboard" ? "/dashboard" : "/dashboard/historique";
+  const BACK_TARGETS: Record<string, { href: string; label: string }> = {
+    dashboard: { href: "/dashboard", label: "← Retour au tableau de bord" },
+    favoris: { href: "/dashboard/favoris", label: "← Retour aux favoris" },
+    alertes: { href: "/dashboard/alertes", label: "← Retour aux alertes" },
+  };
+  const back = BACK_TARGETS[searchParams.from ?? ""] ?? {
+    href: "/dashboard/historique",
+    label: "← Retour à l'historique",
+  };
 
   return (
     <div className="flex flex-col gap-6">
-      <Link href={backHref} className="text-sm text-muted-foreground hover:text-foreground">
-        {searchParams.from === "dashboard" ? (
-          "← Retour au tableau de bord"
-        ) : (
-          <>← Retour à l&rsquo;historique</>
-        )}
+      <Link href={back.href} className="text-sm text-muted-foreground hover:text-foreground">
+        {back.label}
       </Link>
       <ScanCard
         imageUrl={scan.imageUrl}

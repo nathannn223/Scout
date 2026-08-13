@@ -82,16 +82,24 @@ export default async function DashboardPage() {
                       />
                     )}
                     <div className="min-w-0 flex-1">
-                      <StopPropagation>
-                        <a
-                          href={product.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="block truncate text-base font-medium hover:underline"
-                        >
-                          {product.title}
-                        </a>
-                      </StopPropagation>
+                      {item.imageUrl ? (
+                        // Favorited as "the whole article" — the merchant
+                        // link would just be whichever match happened to be
+                        // cheapest at scan time, not a real offer to send
+                        // someone to. Not a link.
+                        <p className="truncate text-base font-medium">{product.title}</p>
+                      ) : (
+                        <StopPropagation>
+                          <a
+                            href={product.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block truncate text-base font-medium hover:underline"
+                          >
+                            {product.title}
+                          </a>
+                        </StopPropagation>
+                      )}
                       <p className="text-sm text-muted-foreground">
                         {product.merchantName} · {Number(product.price).toFixed(2)}{" "}
                         {product.currency}

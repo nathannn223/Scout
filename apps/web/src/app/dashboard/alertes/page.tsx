@@ -3,6 +3,8 @@ import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { WishlistButton } from "../wishlist-button";
 import { TargetPriceInput } from "../target-price-input";
+import { ClickableRow } from "@/components/clickable-row";
+import { StopPropagation } from "@/components/stop-propagation";
 
 export default async function AlertesPage() {
   const user = await requireUser();
@@ -36,7 +38,11 @@ export default async function AlertesPage() {
             const product = productsById.get(item.matchedProductId);
             if (!product) return null;
             return (
-              <div key={item.id} className="rounded-xl border border-border bg-card p-3">
+              <ClickableRow
+                key={item.id}
+                href={`/dashboard/scans/${product.scannedItemId}?from=alertes`}
+                className="rounded-xl border border-border bg-card p-3"
+              >
                 <div className="flex items-center gap-3">
                   {(item.imageUrl ?? product.imageUrl) && (
                     <Image
@@ -49,30 +55,40 @@ export default async function AlertesPage() {
                     />
                   )}
                   <div className="min-w-0 flex-1">
-                    <a
-                      href={product.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block truncate text-sm font-medium hover:underline"
-                    >
-                      {product.title}
-                    </a>
+                    {item.imageUrl ? (
+                      <p className="truncate text-sm font-medium">{product.title}</p>
+                    ) : (
+                      <StopPropagation>
+                        <a
+                          href={product.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block truncate text-sm font-medium hover:underline"
+                        >
+                          {product.title}
+                        </a>
+                      </StopPropagation>
+                    )}
                     <p className="text-xs text-muted-foreground">
                       {product.merchantName} · {Number(product.price).toFixed(2)}{" "}
                       {product.currency}
                     </p>
                   </div>
-                  <WishlistButton matchedProductId={product.id} wishlistItemId={item.id} />
+                  <StopPropagation>
+                    <WishlistButton matchedProductId={product.id} wishlistItemId={item.id} />
+                  </StopPropagation>
                 </div>
-                <div className="mt-2 pl-[52px]">
-                  <TargetPriceInput
-                    wishlistItemId={item.id}
-                    targetPrice={Number(item.targetPrice)}
-                    expiresAt={item.expiresAt}
-                    currency={product.currency}
-                  />
-                </div>
-              </div>
+                <StopPropagation>
+                  <div className="mt-2 pl-[52px]">
+                    <TargetPriceInput
+                      wishlistItemId={item.id}
+                      targetPrice={Number(item.targetPrice)}
+                      expiresAt={item.expiresAt}
+                      currency={product.currency}
+                    />
+                  </div>
+                </StopPropagation>
+              </ClickableRow>
             );
           })}
         </div>
