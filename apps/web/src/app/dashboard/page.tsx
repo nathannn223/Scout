@@ -5,6 +5,7 @@ import { requireUser } from "@/lib/auth";
 import { WishlistButton } from "./wishlist-button";
 import { BillingSection } from "./billing-section";
 import { ClickableRow } from "@/components/clickable-row";
+import { StopPropagation } from "@/components/stop-propagation";
 
 export default async function DashboardPage() {
   const user = await requireUser();
@@ -79,23 +80,24 @@ export default async function DashboardPage() {
                     />
                   )}
                   <div className="min-w-0 flex-1">
-                    <a
-                      href={product.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      className="block truncate text-sm font-medium hover:underline"
-                    >
-                      {product.title}
-                    </a>
+                    <StopPropagation>
+                      <a
+                        href={product.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block truncate text-sm font-medium hover:underline"
+                      >
+                        {product.title}
+                      </a>
+                    </StopPropagation>
                     <p className="text-xs text-muted-foreground">
                       {product.merchantName} · {Number(product.price).toFixed(2)}{" "}
                       {product.currency}
                     </p>
                   </div>
-                  <div onClick={(e) => e.stopPropagation()}>
+                  <StopPropagation>
                     <WishlistButton matchedProductId={product.id} wishlistItemId={item.id} />
-                  </div>
+                  </StopPropagation>
                 </ClickableRow>
               );
             })}
