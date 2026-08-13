@@ -111,14 +111,14 @@ export function TryWidget({ currentPlan }: { currentPlan?: Plan } = {}) {
   const showDropzone = status === "idle" || status === "uploading" || status === "ready";
 
   return (
-    <div className="mx-auto flex w-full max-w-xl flex-col items-center gap-5">
+    <div className="mx-auto flex w-full max-w-2xl flex-col items-center gap-5">
       {showDropzone && (
         <div className="relative w-full">
           <div
-            className="bg-glow left-1/2 top-1/2 h-[260px] w-[560px] -translate-x-1/2 -translate-y-1/2 animate-drift-b"
+            className="bg-glow left-1/2 top-1/2 h-[320px] w-[680px] -translate-x-1/2 -translate-y-1/2 animate-drift-b"
             aria-hidden
           />
-          <div className="relative z-10 flex flex-col items-center gap-3 rounded-[24px] border border-dashed border-border bg-card px-7 py-10">
+          <div className="relative z-10 flex flex-col items-center gap-4 rounded-[28px] border border-dashed border-border bg-card px-10 py-16">
             <input
               ref={inputRef}
               type="file"
@@ -134,7 +134,7 @@ export function TryWidget({ currentPlan }: { currentPlan?: Plan } = {}) {
                   type="button"
                   onClick={handleDropzoneClick}
                   disabled={status === "uploading" || !isLoaded}
-                  className="flex h-11 w-11 items-center justify-center rounded-full bg-border/40 text-foreground transition-opacity hover:opacity-80 disabled:opacity-50"
+                  className="flex h-16 w-16 items-center justify-center rounded-full bg-border/40 text-foreground transition-opacity hover:opacity-80 disabled:opacity-50"
                   aria-label="Choisir une image"
                 >
                   <svg
@@ -144,7 +144,7 @@ export function TryWidget({ currentPlan }: { currentPlan?: Plan } = {}) {
                     strokeWidth={1.8}
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className="h-5 w-5"
+                    className="h-7 w-7"
                   >
                     <path d="M12 16V4M12 4l-4 4M12 4l4 4" />
                     <path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
@@ -154,13 +154,13 @@ export function TryWidget({ currentPlan }: { currentPlan?: Plan } = {}) {
                   type="button"
                   onClick={handleDropzoneClick}
                   disabled={status === "uploading" || !isLoaded}
-                  className="font-medium disabled:opacity-60"
+                  className="text-lg font-semibold disabled:opacity-60"
                 >
                   {status === "uploading"
                     ? "Envoi de la photo…"
                     : "Dépose une image ou clique pour en choisir une"}
                 </button>
-                <p className="text-xs text-muted-foreground">JPG, PNG — 5 Mo max</p>
+                <p className="text-sm text-muted-foreground">JPG, PNG — 5 Mo max</p>
 
                 <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
                   ou
@@ -173,13 +173,13 @@ export function TryWidget({ currentPlan }: { currentPlan?: Plan } = {}) {
                     onChange={(e) => setLinkValue(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleIdentifyLink()}
                     placeholder="Colle un lien vers l'image"
-                    className="min-w-0 flex-1 rounded-full border border-border bg-background px-4 py-3 text-sm placeholder:text-muted-foreground"
+                    className="min-w-0 flex-1 rounded-full border border-border bg-background px-5 py-4 text-base placeholder:text-muted-foreground"
                   />
                   <button
                     type="button"
                     onClick={handleIdentifyLink}
                     disabled={!linkValue.trim() || !isLoaded}
-                    className="shrink-0 rounded-full bg-foreground px-5 text-sm font-bold text-background disabled:opacity-50"
+                    className="shrink-0 rounded-full bg-foreground px-6 text-base font-bold text-background disabled:opacity-50"
                   >
                     Identifier
                   </button>
@@ -190,22 +190,22 @@ export function TryWidget({ currentPlan }: { currentPlan?: Plan } = {}) {
                 <Image
                   src={imageUrl}
                   alt=""
-                  width={140}
-                  height={140}
+                  width={180}
+                  height={180}
                   unoptimized
-                  className="h-32 w-32 rounded-xl border border-border object-cover"
+                  className="h-40 w-40 rounded-xl border border-border object-cover"
                 />
                 <button
                   type="button"
                   onClick={handleIdentifyUpload}
-                  className="rounded-full bg-foreground px-7 py-3 text-sm font-bold text-background"
+                  className="rounded-full bg-foreground px-9 py-4 text-base font-bold text-background"
                 >
                   Identifier ce produit
                 </button>
                 <button
                   type="button"
                   onClick={handleDropzoneClick}
-                  className="text-xs text-muted-foreground hover:text-foreground"
+                  className="text-sm text-muted-foreground hover:text-foreground"
                 >
                   Changer de photo
                 </button>

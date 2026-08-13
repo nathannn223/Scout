@@ -32,7 +32,7 @@ export default function Home() {
         </div>
       </header>
 
-      <section className="relative mx-auto flex w-full max-w-6xl flex-col items-center px-8 pb-14 pt-8 text-center">
+      <section className="relative mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center px-8 pb-14 pt-8 text-center">
         <div
           className="bg-glow left-[68%] top-[-130px] h-[500px] w-[680px] -translate-x-1/2 animate-drift-a"
           aria-hidden
