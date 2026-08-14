@@ -6,3 +6,6 @@ dist/
 *.tsbuildinfo
 .DS_Store
 test-images/
+
+.vercel
+.env*
