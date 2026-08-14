@@ -12,6 +12,11 @@ model User {
   email            String   @unique
   plan             Plan     @default(FREE)
   stripeCustomerId String?
+  // Set opportunistically by requireUser() from the current page's URL
+  // segment ("fr"/"en") — no browser-language detection needed. Used for
+  // transactional email language (price-drop/expiry alerts run outside any
+  // page, so they can't read the locale from a request).
+  locale           String   @default("fr")
   createdAt        DateTime @default(now())
   scans            ScannedItem[]
   wishlist         WishlistItem[]

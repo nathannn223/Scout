@@ -2,27 +2,18 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Button, type ButtonProps } from "@/components/ui/button";
-import type { PaidPlan } from "@/lib/stripe";
+import { Button } from "@/components/ui/button";
 
-export function CheckoutButton({
-  plan,
-  children,
-  ...buttonProps
-}: { plan: PaidPlan; children: React.ReactNode } & Omit<ButtonProps, "onClick" | "disabled">) {
-  const t = useTranslations("CheckoutButton");
+export function PortalButton() {
+  const t = useTranslations("PortalButton");
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function startCheckout() {
+  async function openPortal() {
     setIsPending(true);
     setError(null);
     try {
-      const res = await fetch("/api/stripe/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan }),
-      });
+      const res = await fetch("/api/stripe/portal", { method: "POST" });
       const body = await res.json().catch(() => ({}));
       if (!res.ok || !body.url) {
         throw new Error(body.error || t("genericError"));
@@ -36,8 +27,8 @@ export function CheckoutButton({
 
   return (
     <div className="flex flex-col items-start gap-1">
-      <Button {...buttonProps} onClick={startCheckout} disabled={isPending}>
-        {isPending ? t("redirecting") : children}
+      <Button variant="secondary" size="sm" onClick={openPortal} disabled={isPending}>
+        {isPending ? t("redirecting") : t("manage")}
       </Button>
       {error && <p className="text-xs text-destructive">{error}</p>}
     </div>

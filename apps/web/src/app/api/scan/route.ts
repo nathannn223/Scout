@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getTranslations } from "next-intl/server";
 import { db } from "@/lib/db";
 import { identify, IdentifyError } from "@/lib/anthropic";
 import { searchProducts, visualSearch, SerpApiError } from "@/lib/serpapi";
@@ -8,13 +9,29 @@ import { SCAN_LIMIT } from "@/lib/stripe";
 import type { MatchedProductDTO, ScanResponse } from "@scout/shared";
 
 export async function POST(request: NextRequest) {
+  // Not under app/[locale] — this route can't infer the language from the
+  // URL, so the client (try-widget.tsx) sends it explicitly as a form field.
+  // Parsed before the auth/plan gates below purely so their error messages
+  // can be translated too; the actual expensive work (Blob/Claude/SerpApi)
+  // still only starts once every gate has passed.
+  let formData: FormData;
+  try {
+    formData = await request.formData();
+  } catch {
+    return NextResponse.json({ error: "Expected multipart/form-data." }, { status: 400 });
+  }
+
+  const localeField = formData.get("locale");
+  const locale = localeField === "en" ? "en" : "fr";
+  const t = await getTranslations({ locale, namespace: "Errors" });
+
   // Require a real account before anything else — the free-scan cap only
   // means something if it's tied to one real person, and there's no point
   // spending on Blob/Claude/SerpApi for a request we're about to reject.
   const user = await requireUser();
   if (!user) {
     return NextResponse.json(
-      { error: "Connecte-toi pour identifier un article.", code: "AUTH_REQUIRED" },
+      { error: t("authRequired"), code: "AUTH_REQUIRED" },
       { status: 401 }
     );
   }
@@ -27,7 +44,7 @@ export async function POST(request: NextRequest) {
     const isExtension = request.headers.get("x-scout-client") === "extension";
     if (isExtension) {
       return NextResponse.json(
-        { error: "L'extension est réservée aux abonnés.", code: "EXTENSION_REQUIRES_PLAN" },
+        { error: t("extensionRequiresPlan"), code: "EXTENSION_REQUIRES_PLAN" },
         { status: 402 }
       );
     }
@@ -43,21 +60,12 @@ export async function POST(request: NextRequest) {
     });
     if (scansThisMonth >= limit) {
       const message =
-        user.plan === "FREE"
-          ? "Tu as utilisé ton scan gratuit de ce mois-ci."
-          : `Tu as atteint ta limite de ${limit} scans ce mois-ci.`;
+        user.plan === "FREE" ? t("scanLimitFree") : t("scanLimitReached", { limit });
       return NextResponse.json(
         { error: message, code: "SCAN_LIMIT_REACHED" },
         { status: 402 }
       );
     }
-  }
-
-  let formData: FormData;
-  try {
-    formData = await request.formData();
-  } catch {
-    return NextResponse.json({ error: "Expected multipart/form-data." }, { status: 400 });
   }
 
   const image = formData.get("image");
@@ -137,7 +145,7 @@ export async function POST(request: NextRequest) {
   const MATCH_FETCH_LIMIT = 12;
 
   const [identifyOutcome, visualOutcome] = await Promise.allSettled([
-    identify(imageUrl),
+    identify(imageUrl, locale),
     visualSearch(imageUrl, MATCH_FETCH_LIMIT),
   ]);
 

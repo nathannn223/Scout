@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import { PaywallPrompt } from "@/components/paywall-prompt";
@@ -13,23 +14,14 @@ import type { Plan } from "@prisma/client";
 
 type Status = "idle" | "uploading" | "ready" | "identifying" | "done" | "limit" | "error";
 
-// Simulated but honest progress — /api/scan is a single request/response,
-// there's no real incremental signal to report. A real scan takes ~20-25s,
-// so the label changes at time thresholds and the bar eases toward 92%
-// asymptotically (never reaches it) — always visibly moving, never stuck at
-// a fixed step waiting, and never claims 100% before the real result lands.
-const IDENTIFY_LABELS = [
-  { at: 0, label: "Analyse de l'image…" },
-  { at: 5, label: "Identification du produit…" },
-  { at: 11, label: "Recherche des prix chez les marchands…" },
-  { at: 17, label: "Comparaison des résultats…" },
-];
-
 export function TryWidget({
   currentPlan,
   onResultChange,
 }: { currentPlan?: Plan; onResultChange?: (hasResult: boolean) => void } = {}) {
   const router = useRouter();
+  const locale = useLocale();
+  const t = useTranslations("TryWidget");
+  const tCommon = useTranslations("Common");
   const { isSignedIn, isLoaded } = useUser();
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -39,6 +31,18 @@ export function TryWidget({
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ScanResponse | null>(null);
   const [elapsedMs, setElapsedMs] = useState(0);
+
+  // Simulated but honest progress — /api/scan is a single request/response,
+  // there's no real incremental signal to report. A real scan takes ~20-25s,
+  // so the label changes at time thresholds and the bar eases toward 92%
+  // asymptotically (never reaches it) — always visibly moving, never stuck at
+  // a fixed step waiting, and never claims 100% before the real result lands.
+  const IDENTIFY_LABELS = [
+    { at: 0, label: t("step0") },
+    { at: 5, label: t("step1") },
+    { at: 11, label: t("step2") },
+    { at: 17, label: t("step3") },
+  ];
 
   useEffect(() => {
     if (status !== "identifying") {
@@ -84,11 +88,11 @@ export function TryWidget({
       formData.append("image", file);
       const res = await fetch("/api/upload", { method: "POST", body: formData });
       const body = await res.json().catch(() => ({}));
-      if (!res.ok || !body.url) throw new Error(body.error || "Upload impossible.");
+      if (!res.ok || !body.url) throw new Error(body.error || t("uploadError"));
       setImageUrl(body.url);
       setStatus("ready");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Une erreur est survenue.");
+      setError(err instanceof Error ? err.message : t("genericError"));
       setStatus("error");
     } finally {
       if (inputRef.current) inputRef.current.value = "";
@@ -101,6 +105,7 @@ export function TryWidget({
     try {
       const formData = new FormData();
       formData.append("imageUrl", url);
+      formData.append("locale", locale);
       const res = await fetch("/api/scan", { method: "POST", body: formData });
       const body = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -114,7 +119,7 @@ export function TryWidget({
           router.push(`/sign-in?redirect_url=${encodeURIComponent("/")}`);
           return;
         }
-        throw new Error(body.error || `Erreur ${res.status}.`);
+        throw new Error(body.error || `Error ${res.status}.`);
       }
       setResult(body as ScanResponse);
       setStatus("done");
@@ -122,7 +127,7 @@ export function TryWidget({
       // server-rendered "scans récents" list to include this new one.
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Une erreur est survenue.");
+      setError(err instanceof Error ? err.message : t("genericError"));
       setStatus("error");
     }
   }
@@ -176,7 +181,7 @@ export function TryWidget({
                   onClick={handleDropzoneClick}
                   disabled={status === "uploading" || !isLoaded}
                   className="flex h-16 w-16 items-center justify-center rounded-full bg-border/40 text-foreground transition-opacity hover:opacity-80 disabled:opacity-50"
-                  aria-label="Choisir une image"
+                  aria-label={t("chooseImage")}
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -197,14 +202,12 @@ export function TryWidget({
                   disabled={status === "uploading" || !isLoaded}
                   className="text-lg font-semibold disabled:opacity-60"
                 >
-                  {status === "uploading"
-                    ? "Envoi de la photo…"
-                    : "Dépose une image ou clique pour en choisir une"}
+                  {status === "uploading" ? t("dropzoneUploading") : t("dropzoneIdle")}
                 </button>
-                <p className="text-sm text-muted-foreground">JPG, PNG — 5 Mo max</p>
+                <p className="text-sm text-muted-foreground">{t("fileHint")}</p>
 
                 <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-                  ou
+                  {t("or")}
                 </span>
 
                 <div className="flex w-full flex-col gap-2 sm:flex-row">
@@ -213,7 +216,7 @@ export function TryWidget({
                     value={linkValue}
                     onChange={(e) => setLinkValue(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleIdentifyLink()}
-                    placeholder="Lien de l'image"
+                    placeholder={t("linkPlaceholder")}
                     className="min-w-0 flex-1 rounded-full border border-border bg-background px-5 py-4 text-base placeholder:text-muted-foreground"
                   />
                   <button
@@ -222,7 +225,7 @@ export function TryWidget({
                     disabled={!linkValue.trim() || !isLoaded}
                     className="shrink-0 rounded-full bg-foreground px-6 py-3 text-base font-bold text-background disabled:opacity-50 sm:py-0"
                   >
-                    Identifier
+                    {t("identifyLink")}
                   </button>
                 </div>
               </>
@@ -241,14 +244,14 @@ export function TryWidget({
                   onClick={handleIdentifyUpload}
                   className="rounded-full bg-foreground px-9 py-4 text-base font-bold text-background"
                 >
-                  Identifier ce produit
+                  {t("identifyUpload")}
                 </button>
                 <button
                   type="button"
                   onClick={handleDropzoneClick}
                   className="text-sm text-muted-foreground hover:text-foreground"
                 >
-                  Changer de photo
+                  {t("changePhoto")}
                 </button>
               </>
             )}
@@ -272,8 +275,8 @@ export function TryWidget({
 
       {status === "limit" && (
         <PaywallPrompt
-          title="Scan gratuit déjà utilisé"
-          description="Passe à un palier payant pour continuer à scanner."
+          title={t("limitTitle")}
+          description={t("limitDescription")}
           excludePlans={currentPlan ? EXCLUDE_PLANS_FOR[currentPlan] : []}
         />
       )}
@@ -284,14 +287,12 @@ export function TryWidget({
             <>
               <p className="text-sm font-semibold">
                 {[result.scan.brand, result.scan.category].filter(Boolean).join(" ") ||
-                  "Article identifié"}
+                  tCommon("unknownArticle")}
               </p>
               {result.scan.description && (
                 <p className="mt-1 text-sm text-muted-foreground">{result.scan.description}</p>
               )}
-              <p className="mt-4 text-sm text-muted-foreground">
-                Aucun produit trouvé pour cet article.
-              </p>
+              <p className="mt-4 text-sm text-muted-foreground">{t("noMatches")}</p>
             </>
           ) : (
             <>

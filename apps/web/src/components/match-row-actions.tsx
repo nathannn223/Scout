@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations, useLocale } from "next-intl";
 import { Heart, Bell, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PaywallPrompt } from "@/components/paywall-prompt";
-import { TargetPriceInput } from "@/app/dashboard/target-price-input";
+import { TargetPriceInput } from "@/app/[locale]/dashboard/target-price-input";
 import { EXCLUDE_PLANS_FOR } from "@/lib/stripe";
 import type { Plan } from "@prisma/client";
 
@@ -29,6 +30,8 @@ export function MatchRowActions({
   currentPlan?: Plan;
 }) {
   const router = useRouter();
+  const locale = useLocale();
+  const t = useTranslations("MatchRowActions");
   const [itemId, setItemId] = useState(wishlistItemId);
   const [isPending, setIsPending] = useState(false);
   const [paywallMessage, setPaywallMessage] = useState<string | null>(null);
@@ -43,12 +46,12 @@ export function MatchRowActions({
       const res = await fetch("/api/wishlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ matchedProductId }),
+        body: JSON.stringify({ matchedProductId, locale }),
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
         if (body.code === "UPGRADE_REQUIRED") {
-          setPaywallMessage(body.error || "Les favoris sont réservés aux abonnés.");
+          setPaywallMessage(body.error || t("upgradeRequired"));
         }
         return null;
       }
@@ -92,7 +95,7 @@ export function MatchRowActions({
           size="icon"
           onClick={toggleFavorite}
           disabled={isPending}
-          aria-label={saved ? "Retirer des favoris" : "Ajouter aux favoris"}
+          aria-label={saved ? t("removeFavorite") : t("addFavorite")}
           aria-pressed={saved}
         >
           <Heart className="h-4 w-4" fill={saved ? "currentColor" : "none"} aria-hidden />
@@ -102,7 +105,7 @@ export function MatchRowActions({
           size="icon"
           onClick={handleCreateAlert}
           disabled={isPending || showAlertForm}
-          aria-label="Créer une alerte"
+          aria-label={t("createAlert")}
         >
           <Bell className="h-4 w-4" aria-hidden />
         </Button>
@@ -123,13 +126,13 @@ export function MatchRowActions({
           <button
             type="button"
             onClick={() => setPaywallMessage(null)}
-            aria-label="Fermer"
+            aria-label={t("close")}
             className="absolute right-2 top-2 text-muted-foreground hover:text-foreground"
           >
             <X className="h-4 w-4" aria-hidden />
           </button>
           <PaywallPrompt
-            title="Favoris et alertes"
+            title={t("paywallTitle")}
             description={paywallMessage}
             excludePlans={currentPlan ? EXCLUDE_PLANS_FOR[currentPlan] : []}
           />

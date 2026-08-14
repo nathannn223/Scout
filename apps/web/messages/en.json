@@ -1,0 +1,274 @@
+{
+  "Metadata": {
+    "title": "Scout — Identify an item, find where to buy it cheaper",
+    "description": "A browser extension and dashboard that identify clothing or sneakers from a photo and find where to buy them cheaper, in the right size."
+  },
+  "Nav": {
+    "signIn": "Sign in",
+    "dashboard": "Dashboard",
+    "addToChrome": "Add to Chrome"
+  },
+  "Common": {
+    "unknownArticle": "Item identified",
+    "accountError": "Couldn't load your account. Try signing in again."
+  },
+  "Hero": {
+    "headline": "Buy whatever you see online, at the best price.",
+    "subhead": "Identify any piece of clothing or sneakers you see, and buy it at the best price."
+  },
+  "HowItWorks": {
+    "heading": "How it works",
+    "identification": { "title": "Identification", "body": "One photo is enough — Scout recognizes the item and compares prices." },
+    "wishlist": { "title": "Wishlist", "body": "Save the items you find to come back to them later." },
+    "alerts": { "title": "Price alerts", "body": "Set a target price, get an email as soon as it's reached." }
+  },
+  "Pricing": {
+    "eyebrow": "Pricing",
+    "heading": "A plan for every kind of use."
+  },
+  "Footer": {
+    "copyright": "© {year} Scout",
+    "privacy": "Privacy",
+    "terms": "Terms"
+  },
+  "TryWidget": {
+    "step0": "Analyzing the image…",
+    "step1": "Identifying the product…",
+    "step2": "Searching prices across merchants…",
+    "step3": "Comparing results…",
+    "chooseImage": "Choose an image",
+    "dropzoneUploading": "Uploading photo…",
+    "dropzoneIdle": "Drop an image or click to choose one",
+    "fileHint": "JPG, PNG — 5 MB max",
+    "or": "or",
+    "linkPlaceholder": "Image link",
+    "identifyLink": "Identify",
+    "identifyUpload": "Identify this product",
+    "changePhoto": "Change photo",
+    "genericError": "Something went wrong.",
+    "uploadError": "Upload failed.",
+    "noMatches": "No products found for this item.",
+    "limitTitle": "Free scan already used",
+    "limitDescription": "Upgrade to a paid plan to keep scanning."
+  },
+  "MatchList": {
+    "seeMore": "See more ({count} more)",
+    "locked": "Locked result",
+    "paywallTitle": "Unlock the merchant links",
+    "paywallDescription": "Upgrade to a paid plan to see where to buy this result and save it."
+  },
+  "MatchRowActions": {
+    "removeFavorite": "Remove from favorites",
+    "addFavorite": "Add to favorites",
+    "createAlert": "Create an alert",
+    "close": "Close",
+    "paywallTitle": "Favorites and alerts",
+    "upgradeRequired": "Favorites are reserved for subscribers."
+  },
+  "ScanResultHeader": {
+    "addFavorite": "Add to favorites",
+    "addedFavorite": "Added to favorites",
+    "createAlert": "Create an alert",
+    "close": "Close",
+    "paywallTitle": "Favorites and alerts",
+    "upgradeRequired": "Favorites are reserved for subscribers."
+  },
+  "PaywallPrompt": {
+    "defaultTitle": "Upgrade to a paid plan",
+    "mostPopular": "Most popular",
+    "perMonth": "month",
+    "subscribeTo": "Switch to {plan}",
+    "plans": {
+      "decouverte": "Discovery",
+      "essentiel": "Essential",
+      "pro": "Pro"
+    },
+    "features": {
+      "scans": "Scans per month",
+      "extension": "Chrome extension",
+      "visualSearch": "Visual search (Lens)",
+      "wishlist": "Wishlist",
+      "alerts": "Price alerts",
+      "instantCheck": "Instant verification",
+      "noCommitment": "No commitment"
+    },
+    "values": {
+      "unlimited": "Unlimited",
+      "unlimitedFeminine": "Unlimited",
+      "itemsCount": "{count} items",
+      "activeCount": "{count} active"
+    }
+  },
+  "CheckoutButton": {
+    "redirecting": "Redirecting…",
+    "genericError": "Couldn't start checkout.",
+    "unexpectedError": "Something went wrong."
+  },
+  "PortalButton": {
+    "manage": "Manage subscription",
+    "redirecting": "Redirecting…",
+    "genericError": "Couldn't open subscription management.",
+    "unexpectedError": "Something went wrong."
+  },
+  "BillingSection": {
+    "heading": "My subscription",
+    "currentPlan": "Current plan: {plan}",
+    "scansThisMonth": " — {used}/{limit} scans this month",
+    "choosePlan": "Choose a plan",
+    "upgradePlan": "Upgrade to a higher plan",
+    "planNames": {
+      "FREE": "Free",
+      "DECOUVERTE": "Discovery",
+      "ESSENTIEL": "Essential",
+      "PRO": "Pro"
+    }
+  },
+  "WishlistButton": {
+    "remove": "Remove from wishlist",
+    "save": "Save to wishlist",
+    "close": "Close",
+    "paywallTitle": "Wishlist",
+    "upgradeRequired": "The wishlist is reserved for subscribers."
+  },
+  "TargetPriceInput": {
+    "setTarget": "Set a target price",
+    "alertUnder": "Alert under {price} {currency}",
+    "expiresIn": "expires in {days, plural, one {# day} other {# days}}",
+    "editAlert": "Edit alert",
+    "deleteAlert": "Delete alert",
+    "confirmDelete": "Delete this price alert?",
+    "pricePlaceholder": "Target price",
+    "durationLabel": "Tracking duration",
+    "duration1": "1 month",
+    "duration3": "3 months",
+    "duration6": "6 months",
+    "durationHelp": "This is how long Scout will keep searching for the best price on this item.",
+    "ok": "OK",
+    "createdTitle": "Alert created! Track it from your",
+    "createdLink": "dashboard",
+    "close": "Close",
+    "paywallTitle": "Price alerts",
+    "upgradeRequired": "Price alerts are reserved for subscribers."
+  },
+  "Dashboard": {
+    "sidebar": {
+      "dashboard": "Dashboard",
+      "historique": "History",
+      "favoris": "Favorites",
+      "alertes": "Alerts"
+    },
+    "home": {
+      "recentFavorites": "Recent favorites",
+      "recentScans": "Recent scans",
+      "seeAll": "See all →",
+      "emptyFavorites": "Nothing saved yet.",
+      "emptyScans": "No scans yet."
+    },
+    "favoris": {
+      "empty": "Nothing saved — click the heart on a result to keep it here."
+    },
+    "alertes": {
+      "empty": "No active alerts — set a target price on an item in your favorites to create one."
+    },
+    "historique": {
+      "empty": "No scans yet — identify an item from the dashboard to get started."
+    },
+    "scanDetail": {
+      "backDashboard": "← Back to dashboard",
+      "backFavoris": "← Back to favorites",
+      "backAlertes": "← Back to alerts",
+      "backHistorique": "← Back to history"
+    }
+  },
+  "Legal": {
+    "draftNotice": "Working draft — needs a professional review before going live, especially the publisher identification details (business registration number, address) once the company is officially registered.",
+    "lastUpdated": "Last updated: to be completed at launch.",
+    "cgu": {
+      "metaTitle": "Terms of Service — Scout",
+      "title": "Terms of Service",
+      "service": {
+        "heading": "The service",
+        "body": "Scout identifies clothing or sneakers from a photo and finds matching products across different merchants, along with their prices. Scout doesn't sell any product directly — every purchase happens on the merchant's own site, outside of Scout."
+      },
+      "accuracy": {
+        "heading": "Accuracy of information",
+        "body": "Prices, availability, and product matches come from third-party services (visual search and product search) and are provided for guidance only. Scout doesn't guarantee their accuracy or availability at the time of purchase on the merchant's site."
+      },
+      "subscriptions": {
+        "heading": "Subscriptions",
+        "item1": "The free tier allows a limited number of scans, with no commitment.",
+        "item2": "Paid tiers (Discovery, Essential, Pro) are billed monthly via Stripe and can be cancelled at any time from the subscription management area, with no notice period or cancellation fees.",
+        "item3": "Cancellation takes effect at the end of the period already paid for — no prorated refund for the current month."
+      },
+      "usage": {
+        "heading": "Permitted use",
+        "body": "The service is intended for personal use identifying items and comparing prices. Any abusive automated use, attempt to circumvent account limits, or upload of unlawful content is prohibited and may result in account suspension."
+      },
+      "liability": {
+        "heading": "Liability",
+        "body": "Scout is provided \"as is\". We do our best to keep the service reliable but cannot guarantee continuous availability or the absence of identification errors."
+      },
+      "law": {
+        "heading": "Governing law",
+        "body": "These terms are governed by French law."
+      }
+    },
+    "confidentialite": {
+      "metaTitle": "Privacy Policy — Scout",
+      "title": "Privacy Policy",
+      "draftNoticeExtra": "Working draft — needs a professional review before going live, especially for full GDPR compliance and the publisher identification details (business registration number, address) once the company is officially registered.",
+      "publisher": {
+        "heading": "Publisher",
+        "body": "Scout is published by [Name / company name to be completed], [address to be completed], [registration number to be completed]. Contact: [contact email to be completed]."
+      },
+      "dataCollected": {
+        "heading": "Data collected",
+        "item1": "Email address and account information (managed by Clerk).",
+        "item2": "Images you upload or link for identification — hosted temporarily to allow analysis.",
+        "item3": "History of your scans, saved items, and target prices set.",
+        "item4": "Payment information when subscribing — handled directly by Stripe, Scout never has access to your card number."
+      },
+      "subprocessors": {
+        "heading": "Subprocessors and third-party services",
+        "intro": "Some data passes through third-party providers necessary for the service to run:",
+        "item1": "Clerk — authentication and account management.",
+        "item2": "Stripe — subscription payment and billing.",
+        "item3": "Anthropic (Claude) — image analysis for identification.",
+        "item4": "SerpApi — searching for matching products and their prices.",
+        "item5": "Vercel — site hosting and temporary image storage (Vercel Blob).",
+        "item6": "Resend — sending price alert emails."
+      },
+      "rights": {
+        "heading": "Your rights (GDPR)",
+        "body": "You can request access to, correction of, or deletion of your data at any time by contacting us at [contact email to be completed]. Deleting your account also deletes your scan history and wishlist."
+      },
+      "cookies": {
+        "heading": "Cookies",
+        "body": "Scout uses a session cookie (managed by Clerk) required to stay signed in to your account. No advertising or third-party tracking cookies are used today."
+      }
+    }
+  },
+  "Errors": {
+    "authRequired": "Sign in to identify an item.",
+    "extensionRequiresPlan": "The extension is reserved for subscribers.",
+    "scanLimitFree": "You've used your free scan for this month.",
+    "scanLimitReached": "You've reached your limit of {limit} scans this month.",
+    "wishlistUpgradeRequired": "The wishlist is reserved for subscribers.",
+    "wishlistLimitReached": "Your wishlist is limited to {limit} items on this plan.",
+    "alertsUpgradeRequired": "Price alerts are reserved for Essential and Pro subscribers.",
+    "alertLimitReached": "You've reached your limit of {limit} active alerts for this plan."
+  },
+  "Emails": {
+    "priceDrop": {
+      "subject": "Price drop: {productTitle}",
+      "label": "Scout — price alert",
+      "cta": "View product"
+    },
+    "alertExpiring": {
+      "subject": "Your price alert is expiring soon: {productTitle}",
+      "label": "Scout — price alert",
+      "body": "Price tracking for this item stops in {days, plural, one {1 day} other {# days}} unless you do something. Head back to your favorites to extend it.",
+      "cta": "View my favorites"
+    }
+  }
+}

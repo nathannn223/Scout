@@ -19,8 +19,13 @@ function getPrimaryEmail(user: User): string | null {
  * Requires a real, signed-in Clerk user — every route that touches user data
  * needs this (scanning, scan history, wishlist, billing). Returns null if
  * there is no session; callers should respond 401.
+ *
+ * `locale`, when passed by a page under `app/[locale]`, opportunistically
+ * keeps `User.locale` in sync with whichever language they're actually
+ * browsing in — used later for transactional emails, which run outside any
+ * page and can't read the locale from a request.
  */
-export async function requireUser() {
+export async function requireUser(locale?: string) {
   const { userId } = await auth();
   if (!userId) return null;
 
@@ -30,7 +35,7 @@ export async function requireUser() {
 
   return db.user.upsert({
     where: { email },
-    update: {},
-    create: { email },
+    update: locale ? { locale } : {},
+    create: locale ? { email, locale } : { email },
   });
 }

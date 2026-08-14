@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getTranslations } from "next-intl/server";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { WISHLIST_LIMIT, type PaidPlan } from "@/lib/stripe";
@@ -57,13 +58,26 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  // Not under app/[locale] — the client (match-row-actions.tsx,
+  // scan-result-header.tsx, wishlist-button.tsx) sends its current locale
+  // explicitly in the JSON body, same pattern as api/scan/route.ts.
+  let body: { matchedProductId?: unknown; imageUrl?: unknown; locale?: unknown };
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Expected a JSON body." }, { status: 400 });
+  }
+
+  const locale = body.locale === "en" ? "en" : "fr";
+  const t = await getTranslations({ locale, namespace: "Errors" });
+
   const user = await requireUser();
   if (!user) {
-    return NextResponse.json({ error: "Authentication required." }, { status: 401 });
+    return NextResponse.json({ error: t("authRequired"), code: "AUTH_REQUIRED" }, { status: 401 });
   }
   if (user.plan === "FREE") {
     return NextResponse.json(
-      { error: "La wishlist est réservée aux abonnés.", code: "UPGRADE_REQUIRED" },
+      { error: t("wishlistUpgradeRequired"), code: "UPGRADE_REQUIRED" },
       { status: 402 }
     );
   }
@@ -74,19 +88,12 @@ export async function POST(request: NextRequest) {
     if (count >= limit) {
       return NextResponse.json(
         {
-          error: `Ta wishlist est limitée à ${limit} articles sur ce palier.`,
+          error: t("wishlistLimitReached", { limit }),
           code: "UPGRADE_REQUIRED",
         },
         { status: 402 }
       );
     }
-  }
-
-  let body: { matchedProductId?: unknown; imageUrl?: unknown };
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Expected a JSON body." }, { status: 400 });
   }
 
   if (typeof body.matchedProductId !== "string" || body.matchedProductId.length === 0) {

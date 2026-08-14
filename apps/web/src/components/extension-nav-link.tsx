@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 // Placeholder until the Chrome Web Store listing is live — update once
 // Scout is published.
@@ -13,6 +14,7 @@ function isMobile(): boolean {
 }
 
 export function ExtensionNavLink() {
+  const t = useTranslations("Nav");
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -28,7 +30,7 @@ export function ExtensionNavLink() {
       rel="noopener noreferrer"
       className="text-xs text-muted-foreground hover:text-foreground"
     >
-      Ajouter à Chrome
+      {t("addToChrome")}
     </a>
   );
 }

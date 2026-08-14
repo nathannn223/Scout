@@ -4,6 +4,7 @@ import { sendPriceDropAlert, sendAlertExpiringEmail } from "@/lib/resend";
 import { classifyCandidate } from "@/lib/product-match";
 import { confirmSameProduct } from "@/lib/anthropic";
 import type { WishlistItem, User } from "@prisma/client";
+import type { Locale } from "@/i18n/routing";
 
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -26,6 +27,7 @@ export async function sendExpiryReminderIfDue(item: WishlistItem & { user: User 
       to: item.user.email,
       productTitle: product.title,
       expiresInDays: 1,
+      locale: item.user.locale as Locale,
     });
     await db.wishlistItem.update({
       where: { id: item.id },
@@ -41,6 +43,7 @@ export async function sendExpiryReminderIfDue(item: WishlistItem & { user: User 
       to: item.user.email,
       productTitle: product.title,
       expiresInDays: 14,
+      locale: item.user.locale as Locale,
     });
     await db.wishlistItem.update({
       where: { id: item.id },
@@ -196,6 +199,7 @@ export async function checkAndAlertWishlistItem(
         newPrice: currentPrice,
         currency: cheapest.currency,
         productUrl: cheapest.url,
+        locale: item.user.locale as Locale,
       });
       await db.wishlistItem.update({
         where: { id: item.id },

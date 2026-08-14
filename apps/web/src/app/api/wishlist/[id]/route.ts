@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getTranslations } from "next-intl/server";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { ALERT_LIMIT } from "@/lib/stripe";
@@ -18,12 +19,15 @@ export async function PATCH(
     return NextResponse.json({ error: "Wishlist item not found." }, { status: 404 });
   }
 
-  let body: { targetPrice?: unknown; durationMonths?: unknown };
+  let body: { targetPrice?: unknown; durationMonths?: unknown; locale?: unknown };
   try {
     body = await request.json();
   } catch {
     return NextResponse.json({ error: "Expected a JSON body." }, { status: 400 });
   }
+
+  const locale = body.locale === "en" ? "en" : "fr";
+  const t = await getTranslations({ locale, namespace: "Errors" });
 
   if (body.targetPrice !== null && typeof body.targetPrice !== "number") {
     return NextResponse.json(
@@ -54,7 +58,7 @@ export async function PATCH(
     if (limit === 0) {
       return NextResponse.json(
         {
-          error: "Les alertes de prix sont réservées aux abonnés Essentiel et Pro.",
+          error: t("alertsUpgradeRequired"),
           code: "UPGRADE_REQUIRED",
         },
         { status: 402 }
@@ -70,7 +74,7 @@ export async function PATCH(
       if (activeAlerts >= limit) {
         return NextResponse.json(
           {
-            error: `Tu as atteint ta limite de ${limit} alertes actives pour ce palier.`,
+            error: t("alertLimitReached", { limit }),
             code: "UPGRADE_REQUIRED",
           },
           { status: 402 }

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { Lock } from "lucide-react";
 import { MatchRowActions } from "@/components/match-row-actions";
 import { PaywallPrompt } from "@/components/paywall-prompt";
@@ -31,6 +32,7 @@ export function MatchList({
   locked: boolean;
   currentPlan?: Plan;
 }) {
+  const t = useTranslations("MatchList");
   const [showPaywall, setShowPaywall] = useState(false);
   const [showAll, setShowAll] = useState(false);
 
@@ -100,7 +102,7 @@ export function MatchList({
               </p>
             </div>
             {locked ? (
-              <Lock className="h-4 w-4 shrink-0 text-muted-foreground" aria-label="Résultat verrouillé" />
+              <Lock className="h-4 w-4 shrink-0 text-muted-foreground" aria-label={t("locked")} />
             ) : (
               <div onClick={(e) => e.stopPropagation()}>
                 <MatchRowActions
@@ -121,14 +123,14 @@ export function MatchList({
           onClick={() => setShowAll(true)}
           className="self-center text-sm font-medium text-muted-foreground hover:text-foreground"
         >
-          Voir plus ({matches.length - VISIBLE_COUNT} de plus)
+          {t("seeMore", { count: matches.length - VISIBLE_COUNT })}
         </button>
       )}
 
       {showPaywall && (
         <PaywallPrompt
-          title="Débloque les liens marchands"
-          description="Passe à un palier payant pour voir où acheter ce résultat et le sauvegarder."
+          title={t("paywallTitle")}
+          description={t("paywallDescription")}
           excludePlans={currentPlan ? EXCLUDE_PLANS_FOR[currentPlan] : []}
         />
       )}

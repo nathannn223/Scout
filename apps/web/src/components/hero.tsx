@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { TryWidget } from "@/components/try-widget";
 
 export function Hero() {
+  const t = useTranslations("Hero");
   const [hasResult, setHasResult] = useState(false);
 
   return (
@@ -15,12 +17,11 @@ export function Hero() {
             : "max-w-3xl text-[62px] sm:text-[78px]"
         }`}
       >
-        Achète au meilleur prix ce que tu vois sur internet.
+        {t("headline")}
       </h1>
       {!hasResult && (
         <p className="mt-6 max-w-lg text-balance text-[21px] leading-relaxed text-muted-foreground">
-          Identifie n&rsquo;importe quel vêtement ou sneakers que tu vois et achète-le au
-          meilleur prix.
+          {t("subhead")}
         </p>
       )}
 

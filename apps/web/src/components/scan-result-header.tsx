@@ -3,10 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useTranslations, useLocale } from "next-intl";
 import { Heart, Bell, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PaywallPrompt } from "@/components/paywall-prompt";
-import { TargetPriceInput } from "@/app/dashboard/target-price-input";
+import { TargetPriceInput } from "@/app/[locale]/dashboard/target-price-input";
 import { EXCLUDE_PLANS_FOR } from "@/lib/stripe";
 import type { ScanResponse, MatchedProductDTO } from "@scout/shared";
 import type { Plan } from "@prisma/client";
@@ -21,6 +22,9 @@ export function ScanResultHeader({
   currentPlan?: Plan;
 }) {
   const router = useRouter();
+  const locale = useLocale();
+  const t = useTranslations("ScanResultHeader");
+  const tCommon = useTranslations("Common");
   const [wishlistItemId, setWishlistItemId] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
   const [paywallMessage, setPaywallMessage] = useState<string | null>(null);
@@ -41,12 +45,12 @@ export function ScanResultHeader({
       const res = await fetch("/api/wishlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ matchedProductId: cheapest.id, imageUrl: scan.imageUrl }),
+        body: JSON.stringify({ matchedProductId: cheapest.id, imageUrl: scan.imageUrl, locale }),
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
         if (body.code === "UPGRADE_REQUIRED") {
-          setPaywallMessage(body.error || "Les favoris sont réservés aux abonnés.");
+          setPaywallMessage(body.error || t("upgradeRequired"));
         }
         return null;
       }
@@ -86,7 +90,7 @@ export function ScanResultHeader({
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-3">
             <p className="text-lg font-semibold">
-              {[scan.brand, scan.category].filter(Boolean).join(" ") || "Article identifié"}
+              {[scan.brand, scan.category].filter(Boolean).join(" ") || tCommon("unknownArticle")}
             </p>
             <Button
               type="button"
@@ -96,7 +100,7 @@ export function ScanResultHeader({
               disabled={isPending}
             >
               <Heart className="h-4 w-4" fill={wishlistItemId ? "currentColor" : "none"} aria-hidden />
-              {wishlistItemId ? "Ajouté aux favoris" : "Ajouter aux favoris"}
+              {wishlistItemId ? t("addedFavorite") : t("addFavorite")}
             </Button>
             <Button
               type="button"
@@ -106,7 +110,7 @@ export function ScanResultHeader({
               disabled={isPending || showAlertForm}
             >
               <Bell className="h-4 w-4" aria-hidden />
-              Créer une alerte
+              {t("createAlert")}
             </Button>
           </div>
           {scan.description && (
@@ -131,13 +135,13 @@ export function ScanResultHeader({
           <button
             type="button"
             onClick={() => setPaywallMessage(null)}
-            aria-label="Fermer"
+            aria-label={t("close")}
             className="absolute right-2 top-2 text-muted-foreground hover:text-foreground"
           >
             <X className="h-4 w-4" aria-hidden />
           </button>
           <PaywallPrompt
-            title="Favoris et alertes"
+            title={t("paywallTitle")}
             description={paywallMessage}
             excludePlans={currentPlan ? EXCLUDE_PLANS_FOR[currentPlan] : []}
           />

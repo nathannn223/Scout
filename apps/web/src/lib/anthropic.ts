@@ -52,8 +52,12 @@ const IDENTIFY_TOOL: Anthropic.Tool = {
   strict: true,
 };
 
-export async function identify(imageUrl: string): Promise<IdentifyResult> {
+export async function identify(
+  imageUrl: string,
+  locale: "fr" | "en" = "fr"
+): Promise<IdentifyResult> {
   const anthropic = getClient();
+  const language = locale === "en" ? "English" : "French";
 
   let response: Anthropic.Message;
   try {
@@ -74,7 +78,7 @@ export async function identify(imageUrl: string): Promise<IdentifyResult> {
             },
             {
               type: "text",
-              text: "Identify this clothing or sneaker item for a shopping app. Use plain language a non-expert shopper would understand — no insider jargon. Be as specific as possible about the exact model/silhouette, since the search query will be used to find this exact product for sale.",
+              text: `Identify this clothing or sneaker item for a shopping app. Use plain language a non-expert shopper would understand — no insider jargon. Be as specific as possible about the exact model/silhouette, since the search query will be used to find this exact product for sale. Respond in ${language} — except "searchQuery", which should stay in whichever language a shopping search engine is most likely to return real results for the exact product (usually the brand/model's original language).`,
             },
           ],
         },

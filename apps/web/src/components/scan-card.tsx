@@ -21,6 +21,7 @@ export function ScanCard({
   matches,
   locked,
   currentPlan,
+  unknownArticleLabel,
 }: {
   imageUrl: string | null;
   brand: string | null;
@@ -29,6 +30,7 @@ export function ScanCard({
   matches: ScanCardMatch[];
   locked: boolean;
   currentPlan?: Plan;
+  unknownArticleLabel: string;
 }) {
   return (
     <div className="rounded-xl border border-border bg-card p-4">
@@ -45,7 +47,7 @@ export function ScanCard({
         )}
         <div>
           <p className="font-semibold">
-            {[brand, category].filter(Boolean).join(" ") || "Article identifié"}
+            {[brand, category].filter(Boolean).join(" ") || unknownArticleLabel}
           </p>
           {description && <p className="mt-1 text-sm text-muted-foreground">{description}</p>}
         </div>
