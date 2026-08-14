@@ -207,20 +207,20 @@ export function TryWidget({
                   ou
                 </span>
 
-                <div className="flex w-full gap-2">
+                <div className="flex w-full flex-col gap-2 sm:flex-row">
                   <input
                     type="text"
                     value={linkValue}
                     onChange={(e) => setLinkValue(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleIdentifyLink()}
-                    placeholder="Colle un lien vers l'image"
+                    placeholder="Lien de l'image"
                     className="min-w-0 flex-1 rounded-full border border-border bg-background px-5 py-4 text-base placeholder:text-muted-foreground"
                   />
                   <button
                     type="button"
                     onClick={handleIdentifyLink}
                     disabled={!linkValue.trim() || !isLoaded}
-                    className="shrink-0 rounded-full bg-foreground px-6 text-base font-bold text-background disabled:opacity-50"
+                    className="shrink-0 rounded-full bg-foreground px-6 py-3 text-base font-bold text-background disabled:opacity-50 sm:py-0"
                   >
                     Identifier
                   </button>
