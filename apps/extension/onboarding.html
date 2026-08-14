@@ -4,12 +4,19 @@
     <meta charset="utf-8" />
     <title>Bienvenue sur Scout</title>
     <style>
+      @font-face {
+        font-family: "Manrope";
+        src: url("fonts/Manrope-Variable.ttf") format("truetype-variations");
+        font-weight: 200 800;
+        font-display: swap;
+      }
       :root {
-        --bg: #eef0ea;
-        --ink: #1a1d18;
-        --ink-muted: #565b4f;
+        --bg: #121316;
+        --card: #1c1d21;
+        --ink: #f2f1ee;
+        --ink-muted: #908f94;
         --accent: #ff4a26;
-        --line: rgba(26, 29, 24, 0.13);
+        --line: rgba(242, 241, 238, 0.09);
       }
       * { box-sizing: border-box; }
       body {
@@ -20,7 +27,7 @@
         justify-content: center;
         background: var(--bg);
         color: var(--ink);
-        font-family: -apple-system, "Segoe UI", Arial, sans-serif;
+        font-family: "Manrope", -apple-system, "Segoe UI", Arial, sans-serif;
       }
       .card {
         width: 420px;
@@ -39,9 +46,10 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 28px;
+        color: var(--accent);
         background: rgba(255, 74, 38, 0.12);
       }
+      .icon svg { width: 28px; height: 28px; }
       h1 { font-size: 21px; margin: 0 0 12px; line-height: 1.3; }
       p { color: var(--ink-muted); line-height: 1.55; margin: 0 0 8px; font-size: 14.5px; }
       .steps { text-align: left; margin: 24px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 14px; }
@@ -67,7 +75,7 @@
       button {
         font: inherit;
         border: none;
-        border-radius: 8px;
+        border-radius: 999px;
         padding: 11px 20px;
         cursor: pointer;
       }
@@ -84,7 +92,12 @@
       <div class="logo">Sc<span class="accent">out</span></div>
 
       <section class="screen active" data-screen="0">
-        <div class="icon">🔍</div>
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="10.5" cy="10.5" r="6.5" />
+            <line x1="15.5" y1="15.5" x2="21" y2="21" />
+          </svg>
+        </div>
         <h1>Identifie n&rsquo;importe quelle pièce, en un clic droit.</h1>
         <p>
           Une photo sur Instagram, Pinterest ou un site marchand — Scout retrouve où
@@ -102,7 +115,12 @@
       </section>
 
       <section class="screen" data-screen="2">
-        <div class="icon">👤</div>
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="8" r="4" />
+            <path d="M4 20c0-4 3.5-7 8-7s8 3 8 7" />
+          </svg>
+        </div>
         <h1>L&rsquo;extension est réservée aux abonnés</h1>
         <p>
           Essentiel ou Pro, à partir de 8,99€/mois — scans illimités depuis n&rsquo;importe quel
